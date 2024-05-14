@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8" />
+    <title></title>
+</head>
+<body>
+
+<h1> Staff Listing </h1>
+<h1 th:utext="${message}">Staff Listing table</h1>
+<table border="1">
+
+	<tr th:each="m : ${staffdata}">
+		<td th:text="${m.staffid}"/>
+                <td th:text="${m.staffname}"/>
+	</tr>
+</table>
+</body>
+</html>

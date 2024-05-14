@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8" />
+    <title></title>
+</head>
+<body>
+<h1 th:text="${message}">Hello World</h1>
+<form action="/save">
+ID:   <input type="number" name="id" />
+Name: <input type="text" name="name" />
+Size：<input type="text" name="size" />
+<button type="submit">update</button>
+</form>
+<form action="/put">
+ID:   <input type="number" name="id" />
+Name: <input type="text" name="name" />
+Size：<input type="text" name="size" />
+<button type="submit">add</button>
+</form>
+<form action="/search">
+search1: <input type="text" name="val" />
+<button type="submit">search</button>
+</form>
+<table border="1">
+	<tr th:each="m : ${data}">
+                 <td th:text="id"/>
+		<td th:text="${m.name}"/>
+		<td th:text="${m.size}"/>
+	</tr>
+</table>
+</body>
+</html>

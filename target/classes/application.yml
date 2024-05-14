@@ -1,0 +1,109 @@
+# SERVER SETTINGS  
+server:  
+    port: 8080
+        
+# SPRING PROFILES  
+spring:
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 10MB
+            max-request-size: 10MB
+    application:
+        name: capit-ai
+    devtools:
+        livereload:
+            enabled: true
+        restart:
+            enabled: true
+    jpa:
+        database: mysql
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+    # DATASOURCE  
+    datasource:  
+        url: jdbc:mysql://mysqldb/capit_ai?useSSL=false&serverTimezone=UTC&publicKeyRetrieval=false
+        username: capit_ai_dba
+        password: capit_ai_dba_password
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    # HTTP ENCODING
+    # OAuth2
+    security:
+        # oauth2:
+        #     client:
+        #         registration:
+        #             google:
+        #                 client-id: 495701399301-mf9i0qscj1g6a4frshtih6274e1650vs.apps.googleusercontent.com
+        #                 client-secret: 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
+        #                 scope:
+        #                     - email
+        #                     - profile
+        #             facebook:
+        #                 client-id: 1772934496537954
+        #                 client-secret: b9b2fce73af2428d158cbdcd3712b3b3
+        #                 scope:
+        #                     - email
+        #                     - public_profile
+        #         # provider:
+        #         #     google:
+        #         #         authorization-uri: https://accounts.google.com/o/oauth2/auth
+        #         #         token-uri: https://accounts.google.com/o/oauth2/token
+        #         #         user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+        #         #         user-name-attribute: sub
+        firebase-props:
+            database-url: ${FIREBASE_DATABASE}
+            enable-strict-server-session: false
+            enable-check-session-revoked: false
+            enable-logout-everywhere: false
+            session-expiry-in-days: 5
+        # cookie-props:
+        #     max-age-in-minutes: 7200
+        #     http-only: true
+        #     secure: true
+        #     domain: ${DOMAIN}
+        #     path: /
+        # allow-credentials: true
+        # allowed-origins:
+        #     - https://${DOMAIN}
+        #     - http://localhost:3000
+        # allowed-methods:
+        #     - GET
+        #     - POST
+        #     - PUT
+        #     - PATCH
+        #     - DELETE
+        #     - OPTIONS
+        # allowed-headers:
+        #     - Authorization
+        #     - Origin
+        #     - Content-Type
+        #     - Accept
+        #     - Accept-Encoding
+        #     - Accept-Language
+        #     - Access-Control-Allow-Origin
+        #     - Access-Control-Allow-Headers
+        #     - Access-Control-Request-Method
+        #     - X-Requested-With
+        #     - X-Auth-Token
+        #     - X-Xsrf-Token
+        #     - Cache-Control
+        #     - Id-Token
+        # allowed-public-apis:
+        #     - /favicon.ico
+        #     - /session/login
+        #     - /public/**
+        # exposed-headers:
+        #     - X-Xsrf-Token
+# SWAGGER SETTINGS
+springdoc:
+    api-docs:
+        path: /api-docs
+    swagger-ui:
+        path: /api-docs-ui.html
+        operationsSorter: alpha
+
+# MYBATIS SETTIING            
+# mybatis:
+#     configuration:
+#         mapUnderscoreToCamelCase: true 
