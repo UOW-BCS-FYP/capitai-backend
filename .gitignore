@@ -25,3 +25,6 @@ replay_pid*
 
 .gradle/
 gradle/
+
+# ignore secrets folder
+secrets/

@@ -10,6 +10,10 @@ services:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
       - ./frontend:/app/frontend
+      - ./secrets:/app/secrets
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/secrets/capit-ai-firebase-adminsdk.json
+      FIREBASE_DATABASE: https://capitai-default-rtdb.firebaseio.com
     # command: mvn spring-boot:run
     command: tail -f /dev/null
     # command: /app/mvnw clean spring-boot:run

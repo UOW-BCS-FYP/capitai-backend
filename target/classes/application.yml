@@ -22,7 +22,7 @@ spring:
         hibernate:
             ddl-auto: update
     # DATASOURCE  
-    datasource:  
+    datasource:
         url: jdbc:mysql://mysqldb/capit_ai?useSSL=false&serverTimezone=UTC&publicKeyRetrieval=false
         username: capit_ai_dba
         password: capit_ai_dba_password
@@ -30,6 +30,12 @@ spring:
     # HTTP ENCODING
     # OAuth2
     security:
+        firebase-props:
+            database-url: ${FIREBASE_DATABASE}
+            enable-strict-server-session: false
+            enable-check-session-revoked: false
+            enable-logout-everywhere: false
+            session-expiry-in-days: 5
         # oauth2:
         #     client:
         #         registration:
@@ -51,50 +57,44 @@ spring:
         #         #         token-uri: https://accounts.google.com/o/oauth2/token
         #         #         user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
         #         #         user-name-attribute: sub
-        firebase-props:
-            database-url: ${FIREBASE_DATABASE}
-            enable-strict-server-session: false
-            enable-check-session-revoked: false
-            enable-logout-everywhere: false
-            session-expiry-in-days: 5
-        # cookie-props:
-        #     max-age-in-minutes: 7200
-        #     http-only: true
-        #     secure: true
-        #     domain: ${DOMAIN}
-        #     path: /
-        # allow-credentials: true
-        # allowed-origins:
-        #     - https://${DOMAIN}
-        #     - http://localhost:3000
-        # allowed-methods:
-        #     - GET
-        #     - POST
-        #     - PUT
-        #     - PATCH
-        #     - DELETE
-        #     - OPTIONS
-        # allowed-headers:
-        #     - Authorization
-        #     - Origin
-        #     - Content-Type
-        #     - Accept
-        #     - Accept-Encoding
-        #     - Accept-Language
-        #     - Access-Control-Allow-Origin
-        #     - Access-Control-Allow-Headers
-        #     - Access-Control-Request-Method
-        #     - X-Requested-With
-        #     - X-Auth-Token
-        #     - X-Xsrf-Token
-        #     - Cache-Control
-        #     - Id-Token
-        # allowed-public-apis:
-        #     - /favicon.ico
-        #     - /session/login
-        #     - /public/**
-        # exposed-headers:
-        #     - X-Xsrf-Token
+        cookie-props:
+            max-age-in-minutes: 7200
+            http-only: true
+            secure: true
+            domain: ${DOMAIN}
+            path: /
+        allow-credentials: true
+        allowed-origins:
+            - https://${DOMAIN}
+            - http://localhost:3000
+        allowed-methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+        allowed-headers:
+            - Authorization
+            - Origin
+            - Content-Type
+            - Accept
+            - Accept-Encoding
+            - Accept-Language
+            - Access-Control-Allow-Origin
+            - Access-Control-Allow-Headers
+            - Access-Control-Request-Method
+            - X-Requested-With
+            - X-Auth-Token
+            - X-Xsrf-Token
+            - Cache-Control
+            - Id-Token
+        allowed-public-apis:
+            - /favicon.ico
+            - /session/login
+            - /public/**
+        exposed-headers:
+            - X-Xsrf-Token
 # SWAGGER SETTINGS
 springdoc:
     api-docs:

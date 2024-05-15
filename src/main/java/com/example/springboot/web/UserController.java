@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,16 +20,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.springboot.dto.AuthRequestDTO;
-import com.example.springboot.dto.JwtResponseDTO;
-import com.example.springboot.dto.RefreshTokenRequestDTO;
+import com.example.springboot.dto.FirebaseUserDTO;
 import com.example.springboot.dto.UserRequestDTO;
 import com.example.springboot.dto.UserResponseDTO;
-import com.example.springboot.model.RefreshToken;
 import com.example.springboot.model.TourInfo;
 import com.example.springboot.service.AdminUserServiceImpl;
-import com.example.springboot.service.JwtService;
-import com.example.springboot.service.RefreshTokenService;
 import com.example.springboot.service.UserService;
 import com.example.springboot.service.UserServiceImpl;
 
@@ -38,16 +34,12 @@ public class UserController {
 
     private final UserService userService;
     private final UserService adminUserService;
-    private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserController(UserServiceImpl userService, AdminUserServiceImpl adminUserService, JwtService jwtService, RefreshTokenService refreshTokenService, AuthenticationManager authenticationManager) {
+    public UserController(UserServiceImpl userService, AdminUserServiceImpl adminUserService, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.adminUserService = adminUserService;
-        this.jwtService = jwtService;
-        this.refreshTokenService = refreshTokenService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -82,45 +74,13 @@ public class UserController {
     //     }
     // }
 
-    @PostMapping("/login")
-    public JwtResponseDTO authenticateAndGetToken(@RequestBody AuthRequestDTO authRequestDTO){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getEmail(), authRequestDTO.getPassword()));
-        System.out.println("Authentication: " + authentication.isAuthenticated());
-        if(authentication.isAuthenticated()){
-            System.out.println("User Authenticated..!!");
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequestDTO.getEmail());
-            return JwtResponseDTO.builder()
-                    .accessToken(jwtService.GenerateToken(authRequestDTO.getEmail()))
-                    .refreshToken(refreshToken.getToken()).build();
-
-        } else {
-            throw new UsernameNotFoundException("invalid user request..!!");
-        }
-    }
-
-    @PostMapping("/refreshToken")
-    public JwtResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO){
-        return refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken())
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUserInfo)
-                .map(userInfo -> {
-                    String accessToken = jwtService.GenerateToken(userInfo.getUsername());
-                    return JwtResponseDTO.builder()
-                            .accessToken(accessToken)
-                            .refreshToken(refreshTokenRequestDTO.getRefreshToken()).build();
-                }).orElseThrow(() ->new RuntimeException("Refresh Token is not in DB..!!"));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO){
-        refreshTokenService.deleteRefreshToken(refreshTokenRequestDTO.getRefreshToken());
-        return ResponseEntity.ok("Refresh Token Deleted Successfully..!!");
-    }
-
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> me(){
-        UserResponseDTO userResponse = userService.getUser();
-        return ResponseEntity.ok().body(userResponse);
+    // public ResponseEntity<UserResponseDTO> me(){
+    //     UserResponseDTO userResponse = userService.getUser();
+    //     return ResponseEntity.ok().body(userResponse);
+    // }
+    public ResponseEntity<FirebaseUserDTO> getUserInfo(@AuthenticationPrincipal FirebaseUserDTO user) {
+        return ResponseEntity.ok(user);
     }
 
     // @PatchMapping(path = "/me", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })

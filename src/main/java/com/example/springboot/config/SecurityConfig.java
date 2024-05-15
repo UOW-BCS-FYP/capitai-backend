@@ -1,11 +1,13 @@
 package com.example.springboot.config;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,52 +18,32 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.example.springboot.security.CustomOAuth2SuccessfulHandler;
-import com.example.springboot.service.CustomOAuth2UserService;
+import com.example.springboot.properties.SecurityProperties;
 import com.example.springboot.service.UserDetailsServiceImpl;
-import com.example.springboot.web.filter.JwtAuthFilter;
+import com.example.springboot.web.filter.SecurityFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    JwtAuthFilter jwtAuthFilter;
+    private final ObjectMapper objectMapper;
+    private final SecurityProperties securityProperties;
+    private final SecurityFilter tokenAuthenticationFilter;
 
     @Autowired
-    CustomOAuth2UserService oAuth2UserService;
-
-    @Autowired
-    CustomOAuth2SuccessfulHandler customOAuth2SuccessfulHandler;
+    public SecurityConfig(ObjectMapper objectMapper, SecurityProperties securityProperties, SecurityFilter tokenAuthenticationFilter) {
+        this.objectMapper = objectMapper;
+        this.securityProperties = securityProperties;
+        this.tokenAuthenticationFilter = tokenAuthenticationFilter;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -72,14 +54,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .oauth2Login(oauth2 -> 
-                    oauth2
-                        .userInfoEndpoint(userInfo -> 
-                            userInfo
-                                .userService(oAuth2UserService)
-                        )
-                        .successHandler(customOAuth2SuccessfulHandler)
-                )
                 .authorizeHttpRequests((authorize) -> 
                     authorize
                         .requestMatchers(HttpMethod.GET,
@@ -104,58 +78,45 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/**")
                         .authenticated()
                 )
-                // .sessionManagement(sessionManagement -> 
-                //     sessionManagement
-                //         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(sessionManagement -> 
+                    sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .exceptionHandling(exceptionHandling -> 
                     exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) -> 
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-                        )
+                        .authenticationEntryPoint((request, response, authException) -> { 
+                            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            Map<String, Object> errorObject = new HashMap<>();
+                            int errorCode = 401;
+                            errorObject.put("message", "Unauthorized access of protected resource, invalid credentials");
+                            errorObject.put("error", HttpStatus.UNAUTHORIZED);
+                            errorObject.put("code", errorCode);
+                            errorObject.put("timestamp", new Timestamp(new Date().getTime()));
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(errorCode);
+                            response.getWriter().write(objectMapper.writeValueAsString(errorObject));
+                        })
                 )
                 .build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    // @Bean
+    // public PasswordEncoder passwordEncoder() {
+    //     return new BCryptPasswordEncoder();
+    // }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder());
         return authenticationProvider;
-
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-            .bearerFormat("JWT")
-            .scheme("bearer");
-    }
-
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI().addSecurityItem(
-            new SecurityRequirement()
-                .addList("Bearer Authentication"))
-                .components(new Components()
-                    .addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()));
-            // .info(new Info().title("My REST API")
-            //     .description("Some custom description of API.")
-            //     .version("1.0").contact(new Contact().name("Sallo Szrajbman")
-            //         .email("www.baeldung.com").url("salloszraj@gmail.com"))
-            //     .license(new License().name("License of API")
-            //         .url("API license URL")));
     }
 }
