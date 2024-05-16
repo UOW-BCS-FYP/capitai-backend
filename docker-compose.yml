@@ -9,7 +9,6 @@ services:
       # - .:/app
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
-      - ./frontend:/app/frontend
       - ./secrets:/app/secrets
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /app/secrets/capit-ai-firebase-adminsdk.json
