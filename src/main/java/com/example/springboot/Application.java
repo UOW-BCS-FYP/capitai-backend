@@ -20,12 +20,14 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.example.springboot.dao.BookingRepository;
+import com.example.springboot.dao.BudgetCtgyRepository;
 import com.example.springboot.dao.RefreshableCRUDRepositoryImpl;
 import com.example.springboot.dao.RoleRepository;
 import com.example.springboot.dao.TourRepository;
 import com.example.springboot.dao.TourReviewRepository;
 import com.example.springboot.dao.UserRepository;
 import com.example.springboot.model.BookingInfo;
+import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.TourInfo;
 import com.example.springboot.model.TourReview;
 import com.example.springboot.model.UserInfo;
@@ -58,7 +60,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, TourRepository tourRepo, TourReviewRepository tourReviewRepo, BookingRepository bookingRepo, DisputeTypeRepository disputeTypeRepo, DisputeRepository disputeRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, TourRepository tourRepo, TourReviewRepository tourReviewRepo, BookingRepository bookingRepo, DisputeTypeRepository disputeTypeRepo, DisputeRepository disputeRepo, BudgetCtgyRepository budgetRepo) {
         return args -> {
 			UserRole adminRole = new UserRole(1, "Admin");
 			UserRole userRole = new UserRole(2, "User");
@@ -76,9 +78,9 @@ public class Application {
 			String bio1 = "Hi there! I am Joanna Wellick. I am a travel enthusiast and I love to explore new places. I am a travel blogger and I love to share my travel experiences with the world. I am also a travel guide and I love to help people explore new places.";
 			String bio2 = "Hi there! I am Elliot Alderson. I am a travel enthusiast and I love to explore new places. I am a travel blogger and I love to share my travel experiences with the world. I am also a travel guide and I love to help people explore new places.";
 			// bio for user2
-			UserInfo adminUser = new UserInfo(1, "admin@wanderwise.com", password, new HashSet<>(Arrays.asList(adminRole)), "admin@wanderwise.com", "I am Admin", "Administrator", "admin", "admin", null, null, null, null, null);
-			UserInfo defaultUser = new UserInfo(2, "user@wanderwise.com", password, new HashSet<>(Arrays.asList(userRole)), "user@wanderwise.com", bio1, "Joanna Wellick", "Wellick", "Joanna", "/src/assets/post-author-icon.png", null, null, null, null);
-			UserInfo defaultUser2 = new UserInfo( 3, "user2@wanderwise.com", password, new HashSet<>(Arrays.asList(userRole)), "user2@wanderwise.com", bio2, "Elliot Alderson", "Alderson", "Elliot", "/src/assets/post-author-icon.png", null, null, null, null);
+			UserInfo adminUser = new UserInfo(1, "Admin", password, new HashSet<>(Arrays.asList(adminRole)), "admin@wanderwise.com", "I am Admin", "Administrator", "admin", "admin", null, null, null, null, null);
+			UserInfo defaultUser = new UserInfo(2, "Demo User1", password, new HashSet<>(Arrays.asList(userRole)), "Demo User1", bio1, "Joanna Wellick", "Wellick", "Joanna", "/src/assets/post-author-icon.png", null, null, null, null);
+			UserInfo defaultUser2 = new UserInfo( 3, "Demo User2", password, new HashSet<>(Arrays.asList(userRole)), "Demo User2", bio2, "Elliot Alderson", "Alderson", "Elliot", "/src/assets/post-author-icon.png", null, null, null, null);
 			userRepo.saveAll(Arrays.asList(
 				adminUser,
 				defaultUser,
@@ -153,9 +155,28 @@ public class Application {
 			Dispute Dispute2 = new Dispute(2, defaultUser2, booking2, new HashSet<>(Arrays.asList(arrangement)), "this tourist is uncooperative!", "ban him from the platform!");
 			Dispute Dispute3 = new Dispute(3, defaultUser, booking3, new HashSet<>(Arrays.asList(other)), "this tour is offensive!", "change the description!");
 			disputeRepo.saveAll(Arrays.asList(
-					Dispute1,
-					Dispute2,
-					Dispute3
+				Dispute1,
+				Dispute2,
+				Dispute3
+			));
+			
+			BudgetCtgyInfo cat1 = new BudgetCtgyInfo(1, "Furniture repairment", 350, false, 0, now, "active", defaultUser);
+			BudgetCtgyInfo cat2 = new BudgetCtgyInfo(2, "Rent", 10000, true, 1, now, "active", defaultUser2);
+			BudgetCtgyInfo cat3 = new BudgetCtgyInfo(3, "Transportation", 200, true, 1, now, "active", defaultUser);
+			BudgetCtgyInfo cat4 = new BudgetCtgyInfo(4, "Tuition fee", 10000, false, 0, now, "active", defaultUser2);
+			BudgetCtgyInfo cat5 = new BudgetCtgyInfo(5, "Food", 3000, true, 1, now, "active", defaultUser);
+			BudgetCtgyInfo cat6 = new BudgetCtgyInfo(6, "Water bill", 300, true, 3, now, "inactive", defaultUser2);
+			BudgetCtgyInfo cat7 = new BudgetCtgyInfo(7, "Other", 500, false, 0, now, "active", defaultUser);
+			BudgetCtgyInfo cat8 = new BudgetCtgyInfo(8, "Other", 600, false, 0, now, "active", defaultUser2);
+			budgetRepo.saveAll(Arrays.asList(
+				cat1,
+				cat2,
+				cat3,
+				cat4,
+				cat5,
+				cat6,
+				cat7,
+				cat8
 			));
         };
     }
