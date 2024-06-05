@@ -19,16 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.example.springboot.dao.BookingRepository;
 import com.example.springboot.dao.BudgetCtgyRepository;
 import com.example.springboot.dao.RefreshableCRUDRepositoryImpl;
 import com.example.springboot.dao.RoleRepository;
-import com.example.springboot.dao.TourRepository;
-import com.example.springboot.dao.TourReviewRepository;
+import com.example.springboot.dao.SpendingRepository;
 import com.example.springboot.dao.UserRepository;
-import com.example.springboot.model.BookingInfo;
 import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.ExpIncInfo;
+import com.example.springboot.model.SpendingInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.dao.ExpIncRepository;
@@ -56,7 +54,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo) {
         return args -> {
 			UserRole adminRole = new UserRole(1, "Admin");
 			UserRole userRole = new UserRole(2, "User");
@@ -117,6 +115,25 @@ public class Application {
 				exp4,
 				exp5,
 				exp6
+			));
+			
+			SpendingInfo spending1 = new SpendingInfo(1, "Refridgerator repairment", 350, now, "Technician", cat1, defaultUser);
+			SpendingInfo spending2 = new SpendingInfo(2, "Rent", 10000, now, "Landlord", cat2, defaultUser2);
+			SpendingInfo spending3 = new SpendingInfo(3, "Taxi", 100, now, "Driver", cat3, defaultUser);
+			SpendingInfo spending4 = new SpendingInfo(4, "Semester A tuition fee", 10000, now, "University", cat4, defaultUser2);
+			SpendingInfo spending5 = new SpendingInfo(5, "Lunch", 60, now, "Restaurant", cat5, defaultUser);
+			SpendingInfo spending6 = new SpendingInfo(6, "Water bill", 300, now, "Water department", cat6, defaultUser2);
+			SpendingInfo spending7 = new SpendingInfo(7, "Gift", 350, now, "Giftshop", cat7, defaultUser);
+			SpendingInfo spending8 = new SpendingInfo(8, "Doctor visit", 350, now, "Clinic", cat8, defaultUser2);
+			spendingRepo.saveAll(Arrays.asList(
+				spending1,
+				spending2,
+				spending3,
+				spending4,
+				spending5,
+				spending6,
+				spending7,
+				spending8
 			));
         };
     }
