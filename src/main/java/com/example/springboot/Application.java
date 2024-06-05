@@ -28,14 +28,10 @@ import com.example.springboot.dao.TourReviewRepository;
 import com.example.springboot.dao.UserRepository;
 import com.example.springboot.model.BookingInfo;
 import com.example.springboot.model.BudgetCtgyInfo;
-import com.example.springboot.model.TourInfo;
-import com.example.springboot.model.TourReview;
+import com.example.springboot.model.ExpIncInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.model.UserRole;
-import com.example.springboot.model.Dispute;
-import com.example.springboot.model.DisputeType;
-import com.example.springboot.dao.DisputeRepository;
-import com.example.springboot.dao.DisputeTypeRepository;
+import com.example.springboot.dao.ExpIncRepository;
 import com.example.springboot.storage.StorageService;
 
 @EnableJpaRepositories(repositoryBaseClass = RefreshableCRUDRepositoryImpl.class)
@@ -60,7 +56,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, TourRepository tourRepo, TourReviewRepository tourReviewRepo, BookingRepository bookingRepo, DisputeTypeRepository disputeTypeRepo, DisputeRepository disputeRepo, BudgetCtgyRepository budgetRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo) {
         return args -> {
 			UserRole adminRole = new UserRole(1, "Admin");
 			UserRole userRole = new UserRole(2, "User");
@@ -87,78 +83,7 @@ public class Application {
 				defaultUser2
 			));
 
-			String dummyTourDescription = "Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem.";
-			TourInfo tour1 = new TourInfo(1, "Integer Maecenas Eget Viverra", "Hong Kong", 100, "1 week", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-01.png", defaultUser, new HashSet<>(), null);
-			TourInfo tour2 = new TourInfo(2, "Aenean eleifend ante maecenas", "Florida City", 200, "2 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-02.png", defaultUser, new HashSet<>(), null);
-			TourInfo tour3 = new TourInfo(3, "Pulvinar montes lorem et pede", "USA", 300, "3 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-03.png", defaultUser2, new HashSet<>(), null);
-			TourInfo tour4 = new TourInfo(4, "Dis dolor pretium donec dictum", "Canada", 400, "4 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-04.png", defaultUser, new HashSet<>(), null);
-			TourInfo tour5 = new TourInfo(5, "Vici consequat justo enim", "Australia", 500, "5 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-05.png", defaultUser, new HashSet<>(), null);
-			TourInfo tour6 = new TourInfo(6, "Venenatis eget adipiscing luctus lorem", "Florida City", 600, "6 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-06.png", defaultUser, new HashSet<>(), null);
-			TourInfo tour7 = new TourInfo(7, "Aenean eleifend ante maecenas", "Australia", 700, "7 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-07.png", defaultUser2, new HashSet<>(), null);
-			TourInfo tour8 = new TourInfo(8, "Pulvinar montes lorem et pede", "USA", 800, "8 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-08.png", defaultUser2, new HashSet<>(), null);
-			TourInfo tour9 = new TourInfo(9, "Dis dolor pretium donec dictum", "China", 900, "9 weeks", dummyTourDescription, "active", Date.from(Instant.now()), "Aenean Eleifend,Aliquam", "/src/assets/post-09.png", defaultUser, new HashSet<>(), null);
-			tourRepo.saveAll(Arrays.asList(
-				tour1,
-				tour2,
-				tour3,
-				tour4,
-				tour5,
-				tour6,
-				tour7,
-				tour8,
-				tour9
-			));
-
 			Date now = Date.from(Instant.now());
-			TourReview review1 = new TourReview(1, "Great tour!", 4, tour1, defaultUser, now);
-			TourReview review2 = new TourReview(2, "Great tour!", 5, tour1, defaultUser2, now);
-			TourReview review3 = new TourReview(3, "Great tour!", 4, tour2, defaultUser, now);
-			tourReviewRepo.saveAll(Arrays.asList(
-				review1,
-				review2,
-				review3
-			));
-
-			BookingInfo booking1 = new BookingInfo(1, tour9, defaultUser2, now, "booking for 1 person!", 1, 900, "PAID", "Settle", "Payment Mode", "Payment Ref #1", "Payment Remarks", now);
-			BookingInfo booking2 = new BookingInfo(2, tour8, defaultUser, now, "booking for 2 people!", 2, 800, "PAID", "Settle", "Payment Mode", "Payment Ref #2", "Payment Remarks", now);
-			BookingInfo booking3 = new BookingInfo(3, tour7, defaultUser2, now, "booking for 3 people!", 3, 700, "PAID", "Settle", "Payment Mode", "Payment Ref #3", "Payment Remarks", now);
-			BookingInfo booking4 = new BookingInfo(4, tour6, defaultUser, now, "booking for 4 people!", 4, 600, "PAID", "Settle", "Payment Mode", "Payment Ref #4", "Payment Remarks", now);
-			BookingInfo booking5 = new BookingInfo(5, tour5, defaultUser2, now, "booking for 5 people!", 5, 500, "PAID", "Settle", "Payment Mode", "Payment Ref #5", "Payment Remarks", now);
-			BookingInfo booking6 = new BookingInfo(6, tour4, defaultUser, now, "booking for 6 people!", 6, 400, "PAID", "Settle", "Payment Mode", "Payment Ref #6", "Payment Remarks", now);
-			BookingInfo booking7 = new BookingInfo(7, tour3, defaultUser2, now, "booking for 7 people!", 7, 300, "PAID", "Settle", "Payment Mode", "Payment Ref #7", "Payment Remarks", now);
-			BookingInfo booking8 = new BookingInfo(8, tour2, defaultUser, now, "booking for 8 people!", 8, 200, "PAID", "Settle", "Payment Mode", "Payment Ref #8", "Payment Remarks", now);
-			BookingInfo booking9 = new BookingInfo(9, tour1, defaultUser2, now, "booking for 9 people!", 9, 100, "PAID", "Settle", "Payment Mode", "Payment Ref #9", "Payment Remarks", now);
-			BookingInfo booking10 = new BookingInfo(10, tour9, defaultUser, now, "booking for 10 people!", 10, 900, "PAID", "Settle", "Payment Mode", "Payment Ref #10", "Payment Remarks", now);
-			bookingRepo.saveAll(Arrays.asList(
-				booking1,
-				booking2,
-				booking3,
-				booking4,
-				booking5,
-				booking6,
-				booking7,
-				booking8,
-				booking9,
-				booking10
-			));
-
-			DisputeType payment = new DisputeType(1, "Payment");
-			DisputeType arrangement = new DisputeType(2, "Arrangement");
-			DisputeType other = new DisputeType(3, "Other");
-			disputeTypeRepo.saveAll(Arrays.asList(
-				payment,
-				arrangement,
-				other
-			));
-			
-			Dispute Dispute1 = new Dispute(1, defaultUser, booking1, new HashSet<>(Arrays.asList(payment)), "too expensive!", "lower the price!");
-			Dispute Dispute2 = new Dispute(2, defaultUser2, booking2, new HashSet<>(Arrays.asList(arrangement)), "this tourist is uncooperative!", "ban him from the platform!");
-			Dispute Dispute3 = new Dispute(3, defaultUser, booking3, new HashSet<>(Arrays.asList(other)), "this tour is offensive!", "change the description!");
-			disputeRepo.saveAll(Arrays.asList(
-				Dispute1,
-				Dispute2,
-				Dispute3
-			));
 			
 			BudgetCtgyInfo cat1 = new BudgetCtgyInfo(1, "Furniture repairment", 350, false, 0, now, "active", defaultUser);
 			BudgetCtgyInfo cat2 = new BudgetCtgyInfo(2, "Rent", 10000, true, 1, now, "active", defaultUser2);
@@ -177,6 +102,21 @@ public class Application {
 				cat6,
 				cat7,
 				cat8
+			));
+			
+			ExpIncInfo exp1 = new ExpIncInfo(1, "Wage", 10000, true, 1, now, "active", defaultUser);
+			ExpIncInfo exp2 = new ExpIncInfo(2, "Stocks", 1000, true, 1, now, "active", defaultUser);
+			ExpIncInfo exp3 = new ExpIncInfo(3, "Red envelop money", 2500, false, 0, now, "active", defaultUser);
+			ExpIncInfo exp4 = new ExpIncInfo(4, "Business", 25000, true, 3, now, "inactive", defaultUser2);
+			ExpIncInfo exp5 = new ExpIncInfo(5, "Property leasing", 15000, true, 1, now, "active", defaultUser2);
+			ExpIncInfo exp6 = new ExpIncInfo(6, "Bitcoin cash out", 5500, false, 0, now, "active", defaultUser2);
+			expIncRepo.saveAll(Arrays.asList(
+				exp1,
+				exp2,
+				exp3,
+				exp4,
+				exp5,
+				exp6
 			));
         };
     }
