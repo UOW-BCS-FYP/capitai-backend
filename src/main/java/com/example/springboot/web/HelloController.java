@@ -1,6 +1,7 @@
 package com.example.springboot.web;
 
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,10 +16,9 @@ public class HelloController {
 		return "this is in demo2 in tutorial";
     }
 
-    @RequestMapping("/")
-    public String index(ModelMap map) {
-        map.addAttribute("host", "127.0.0.1");
-        return "index";
+    @GetMapping("/")
+    public String index() {
+      return "Greetings from Capit AI!";
     }
 
 }

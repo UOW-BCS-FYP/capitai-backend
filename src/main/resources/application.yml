@@ -23,7 +23,7 @@ spring:
             ddl-auto: update
     # DATASOURCE  
     datasource:
-        url: jdbc:mysql://mysqldb/capit_ai?useSSL=false&serverTimezone=UTC&publicKeyRetrieval=false
+        url: jdbc:mysql://127.0.0.1:3306/capit_ai?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
         username: capit_ai_dba
         password: capit_ai_dba_password
         driver-class-name: com.mysql.cj.jdbc.Driver
