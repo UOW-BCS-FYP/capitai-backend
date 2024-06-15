@@ -9,15 +9,16 @@ RUN curl -s "https://get.sdkman.io" | bash
 # install java 17 with sdkman
 RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install java 17.0.10-oracle"
 # install maven and gradle with sdkman
-RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install maven && sdk install gradle"
+RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install maven 3.9.6"
+# RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle"
 # install springboot with sdkman
 RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install springboot"
 
 COPY . .
 
 # install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt-get install -y nodejs
+# RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+# RUN apt-get install -y nodejs
 
 # install npm packages
 # RUN cd /app/frontend && npm install

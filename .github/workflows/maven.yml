@@ -30,8 +30,8 @@ jobs:
     # - name: Build with Maven
     #   run: mvn -B package --file pom.xml
 
-    - name: Docker Compose
-      run: docker-compose up -d
+    - name: Docker Compose Build
+      run: docker-compose up -d --build
     
     - name: Build with Maven inside Docker
       run: docker-compose exec spring-boot-dev bash & mvn -B package --file pom.xml
