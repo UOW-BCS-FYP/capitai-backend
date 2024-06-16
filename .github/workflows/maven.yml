@@ -41,7 +41,7 @@ jobs:
     - name: Docker Compose Build
       run: |-
         mkdir -p ./secrets
-        echo "${{ secrets.MYSQL_CA_CERT }}" > ./secrets/mysql-ca-certificate.crt
+        echo "${{ secrets.MYSQL_CA_CERT }}" > ./secrets/ca-certificate.crt
         docker-compose up -d --build
     
     - name: Build with Maven inside Docker

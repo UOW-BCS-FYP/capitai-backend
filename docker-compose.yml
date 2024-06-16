@@ -3,8 +3,8 @@ services:
   spring-boot-dev:
     build:
       context: .
-    # secrets:
-    #   - mysql_ca_cert
+      secrets:
+        - mysql_ca_cert
     # working_dir: /app
     ports:
       - "8080:8080"
@@ -48,6 +48,6 @@ services:
 # volumes:
 #   mysql:
 
-# secrets:
-#   mysql_ca_cert:
-#     file: ./secrets/ca-certificate.crt
+secrets:
+  mysql_ca_cert:
+    file: ./secrets/ca-certificate.crt
