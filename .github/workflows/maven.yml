@@ -45,10 +45,10 @@ jobs:
         docker compose up -d --build
     
     - name: Build with Maven inside Docker
-      run: docker-compose exec spring-boot-dev bash & mvn -B package --file pom.xml
+      run: docker compose exec spring-boot-dev bash & mvn -B package --file pom.xml
 
     - name: Docker Compose Down
-      run: docker-compose down
+      run: docker compose down
 
   # Deploy to Google Cloud Run
   deploy:
