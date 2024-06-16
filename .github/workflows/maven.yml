@@ -40,6 +40,9 @@ jobs:
 
     - name: Docker Compose Build
       run: docker-compose up -d --build
+      with:
+        secrets: |
+          "mysql_ca_cert=${{ secrets.MYSQL_CA_CERT }}
     
     - name: Build with Maven inside Docker
       run: docker-compose exec spring-boot-dev bash & mvn -B package --file pom.xml
@@ -75,6 +78,9 @@ jobs:
         run: |-
           docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}"
+        with:
+          secrets: |
+            "mysql_ca_cert=${{ secrets.MYSQL_CA_CERT }}"
 
       # - name: Deploy to Cloud Run
       #   id: deploy

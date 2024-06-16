@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1.0-experimental 
+
 # Developement setup for springboot application
 FROM --platform=linux/amd64 ubuntu:20.04
 
@@ -23,6 +25,10 @@ COPY . .
 # install npm packages
 # RUN cd /app/frontend && npm install
 
+
+RUN --mount=type=secret,id=mysql_ca_cert cat /run/secrets/mysql_ca_cert > /usr/local/share/ca-certificates/ca-certificate.crt
+RUN chmod 644 /usr/local/share/ca-certificates/ca-certificate.crt && \
+    update-ca-certificates
 
 EXPOSE 8080
 

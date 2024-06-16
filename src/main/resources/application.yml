@@ -1,6 +1,6 @@
 # SERVER SETTINGS  
 server:  
-    port: 8080
+    port: ${PORT:8080} # default port 8080
         
 # SPRING PROFILES  
 spring:
@@ -23,9 +23,9 @@ spring:
             ddl-auto: update
     # DATASOURCE  
     datasource:
-        url: jdbc:mysql://127.0.0.1:3306/capit_ai?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
-        username: capit_ai_dba
-        password: capit_ai_dba_password
+        url: ${DATASOURCE_URL}
+        username: ${DATASOURCE_USERNAME:capit_ai_dba}
+        password: ${DATASOURCE_PASSWORD:capit_ai_dba_password}
         driver-class-name: com.mysql.cj.jdbc.Driver
     # HTTP ENCODING
     # OAuth2

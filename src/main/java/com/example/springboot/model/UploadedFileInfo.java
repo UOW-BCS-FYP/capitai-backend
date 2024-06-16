@@ -27,7 +27,7 @@ import lombok.ToString;
 public class UploadedFileInfo {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "ID")
     private long id;
 
