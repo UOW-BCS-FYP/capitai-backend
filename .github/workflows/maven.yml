@@ -42,7 +42,7 @@ jobs:
       run: |-
         mkdir -p ./secrets
         echo "${{ secrets.MYSQL_CA_CERT }}" > ./secrets/ca-certificate.crt
-        docker-compose up -d --build
+        docker compose up -d --build
     
     - name: Build with Maven inside Docker
       run: docker-compose exec spring-boot-dev bash & mvn -B package --file pom.xml
