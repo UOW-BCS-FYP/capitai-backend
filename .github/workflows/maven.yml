@@ -39,7 +39,9 @@ jobs:
     #   run: mvn -B package --file pom.xml
 
     - name: Docker Compose Build
-      run: docker-compose up -d --build
+      run: |-
+        echo "${{ secrets.MYSQL_CA_CERT }}" > ./secrets/mysql-ca-certificate.crt
+        docker-compose up -d --build
     
     - name: Build with Maven inside Docker
       run: docker-compose exec spring-boot-dev bash & mvn -B package --file pom.xml
