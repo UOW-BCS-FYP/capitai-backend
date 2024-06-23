@@ -35,5 +35,8 @@ RUN chmod 644 /usr/local/share/ca-certificates/ca-certificate.crt && \
 
 EXPOSE 8080
 
+# build the application
+RUN mvn clean install -DskipTests
+
 # CMD ["/bin/bash", "-c", "source /root/.sdkman/bin/sdkman-init.sh && mvn spring-boot:run"]
 CMD ["mvn", "clean", "spring-boot:run"]

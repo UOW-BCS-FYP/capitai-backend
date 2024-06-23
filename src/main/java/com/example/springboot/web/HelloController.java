@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 	
 	@ResponseBody
-    @RequestMapping("/hello")
-    public String hello() {
-		return "this is in demo2 in tutorial";
-    }
+  @RequestMapping("/hello")
+  public String hello() {
+    return "this is in demo2 in tutorial";
+  }
 
-    @GetMapping("/")
-    public String index() {
-      return "Greetings from Capit AI!";
-    }
+  @GetMapping("/")
+  public String index() {
+    return "Greetings from Capit AI!";
+  }
 
 }
