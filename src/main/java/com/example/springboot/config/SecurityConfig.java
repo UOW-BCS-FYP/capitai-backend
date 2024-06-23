@@ -1,6 +1,7 @@
 package com.example.springboot.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 import com.example.springboot.properties.SecurityProperties;
 import com.example.springboot.service.UserDetailsServiceImpl;
@@ -53,6 +55,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors ->
+                    cors.configurationSource(request -> {
+                        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                        corsConfig.setAllowCredentials(securityProperties.isAllowCredentials());
+                        List<String> allowedOrigins = securityProperties.getAllowedOrigins();
+                        allowedOrigins.add("*");
+                        corsConfig.setAllowedOrigins(allowedOrigins);
+                        corsConfig.setAllowedMethods(securityProperties.getAllowedMethods());
+                        corsConfig.setAllowedHeaders(securityProperties.getAllowedHeaders());
+                        return corsConfig;
+                    })
+                )
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> 
                     authorize
