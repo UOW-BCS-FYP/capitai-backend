@@ -16,6 +16,9 @@ RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install maven 3
 # install springboot with sdkman
 RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install springboot"
 
+# update path
+ENV PATH="/root/.sdkman/candidates/java/current/bin:/root/.sdkman/candidates/maven/current/bin:/root/.sdkman/candidates/springboot/current/bin:${PATH}"
+
 COPY . .
 
 # install nodejs
