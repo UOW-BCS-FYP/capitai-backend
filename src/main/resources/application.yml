@@ -67,6 +67,7 @@ spring:
         allowed-origins:
             - https://${DOMAIN}
             - http://localhost:3000
+            - *
         allowed-methods:
             - GET
             - POST
