@@ -41,7 +41,7 @@ jobs:
     - name: Docker Compose Build
       run: |-
         mkdir -p ./secrets
-        echo "${{ secrets.MYSQL_CA_CERT }}" > ./secrets/ca-certificate.crt
+        echo "${{ secrets.MYSQL_CA }}" > ./secrets/ca-certificate.crt
         docker compose up -d --build
     
     - name: Build with Maven inside Docker
@@ -76,8 +76,8 @@ jobs:
 
       - name: Build and Push Container
         run: |-
-          echo "${{ secrets.MYSQL_CA_CERT }}" > ./mysql-ca-certificate.crt
-          docker build --secret id=mysql_ca_cert=,src=./mysql-ca-certificate.crt -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" ./
+          echo "${{ secrets.MYSQL_CA }}" > ./mysql-ca-certificate.crt
+          docker build --secret id=mysql_ca_cert,src=./mysql-ca-certificate.crt -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}"
 
       # - name: Deploy to Cloud Run
