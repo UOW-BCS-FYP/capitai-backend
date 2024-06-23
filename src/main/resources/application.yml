@@ -63,11 +63,13 @@ spring:
             secure: true
             domain: ${DOMAIN}
             path: /
-        allow-credentials: true
+        allow-credentials: false
         allowed-origins:
             - https://${DOMAIN}
             - http://${DOMAIN}
             - http://localhost:3000
+            - https://capitai-frontend.pages.dev
+            - https://*.capitai-frontend.pages.dev
         allowed-methods:
             - GET
             - POST
