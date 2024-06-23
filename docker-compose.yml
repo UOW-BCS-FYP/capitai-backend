@@ -1,7 +1,10 @@
 version: '3.1'
 services:
   spring-boot-dev:
-    build: .
+    build:
+      context: .
+      secrets:
+        - mysql_ca_cert
     # working_dir: /app
     ports:
       - "8080:8080"
@@ -13,6 +16,11 @@ services:
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /app/secrets/capit-ai-firebase-adminsdk.json
       FIREBASE_DATABASE: https://capitai-default-rtdb.firebaseio.com
+      DATASOURCE_URL: jdbc:mysql://mysqldb:3306/capit_ai?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      DATASOURCE_USERNAME: capit_ai_dba
+      DATASOURCE_PASSWORD: capit_ai_dba_password
+    # secrets:
+    #   - mysql_ca_cert
     # command: mvn spring-boot:run
     command: tail -f /dev/null
     # command: /app/mvnw clean spring-boot:run
@@ -39,3 +47,7 @@ services:
 
 # volumes:
 #   mysql:
+
+secrets:
+  mysql_ca_cert:
+    file: ./secrets/ca-certificate.crt
