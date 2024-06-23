@@ -66,8 +66,8 @@ spring:
         allow-credentials: true
         allowed-origins:
             - https://${DOMAIN}
+            - http://${DOMAIN}
             - http://localhost:3000
-            - *
         allowed-methods:
             - GET
             - POST
