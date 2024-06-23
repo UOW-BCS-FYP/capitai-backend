@@ -56,15 +56,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors ->
-                    cors.configurationSource(request -> {
-                        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                        corsConfig.setAllowedOrigins(securityProperties.getAllowedOrigins());
-                        corsConfig.setAllowedMethods(securityProperties.getAllowedMethods());
-                        corsConfig.setAllowedHeaders(securityProperties.getAllowedHeaders());
-                        corsConfig.setExposedHeaders(securityProperties.getExposedHeaders());
-                        corsConfig.setAllowCredentials(securityProperties.isAllowCredentials());
-                        return corsConfig;
-                    })
+                    cors
+                        .disable() // disable means that we are not using the default CORS configuration
                 )
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> 
