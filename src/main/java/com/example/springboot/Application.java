@@ -144,7 +144,10 @@ public class Application {
 				registry
 					.addMapping("/**")
 					.allowedOrigins("*")
-					.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH");
+					.allowedMethods("*")
+					.allowedHeaders("*")
+					.exposedHeaders("Authorization") // for JWT
+					.allowCredentials(true); // for JWT
 			}
 		};
 	}
