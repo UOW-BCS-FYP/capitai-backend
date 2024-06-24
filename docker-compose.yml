@@ -19,6 +19,7 @@ services:
       DATASOURCE_URL: jdbc:mysql://mysqldb:3306/capit_ai?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
       DATASOURCE_USERNAME: capit_ai_dba
       DATASOURCE_PASSWORD: capit_ai_dba_password
+      SPRING_PROFILES_ACTIVE: dev
     # secrets:
     #   - mysql_ca_cert
     # command: mvn spring-boot:run

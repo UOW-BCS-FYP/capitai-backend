@@ -55,7 +55,20 @@ public class Application {
 
 	@Bean
     public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo) {
-        return args -> {
+        // if not in dev mode, do nothing
+		// to config dev mode, set SPRING_PROFILES_ACTIVE=dev in the environment variables
+		if (System.getenv("SPRING_PROFILES_ACTIVE") != null && !System.getenv("SPRING_PROFILES_ACTIVE").equals("dev")) {
+			return args -> {};
+		}
+		
+		return args -> {
+			// truncate all tables
+			spendingRepo.deleteAll();
+			budgetRepo.deleteAll();
+			expIncRepo.deleteAll();
+			userRepo.deleteAll();
+			roleRepo.deleteAll();
+
 			UserRole adminRole = new UserRole(1, "Admin");
 			UserRole userRole = new UserRole(2, "User");
             roleRepo.saveAll(Arrays.asList(
