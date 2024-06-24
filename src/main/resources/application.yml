@@ -1,6 +1,7 @@
 # SERVER SETTINGS  
 server:  
     port: ${PORT:8080} # default port 8080
+    forward-headers-strategy: framework
         
 # SPRING PROFILES  
 spring:
