@@ -156,7 +156,8 @@ public class Application {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry
 					.addMapping("/**")
-					.allowedOrigins("*")
+					// .allowedOrigins("*")
+					.allowedOriginPatterns("*")
 					.allowedMethods("*")
 					.allowedHeaders("*")
 					.exposedHeaders("Authorization") // for JWT
