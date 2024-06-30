@@ -49,7 +49,7 @@ public class IncomeController {
         return ResponseEntity.ok().body(incomeRepository.findAllByUserInfo(userInfo));
     }
     
-    @PatchMapping("/sbs/i_s/income/{s_id}")
+    @PatchMapping("/sbs/i_s/income/{i_id}")
     public ResponseEntity<IncomeInfo> updateSpending(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("i_id") Long id, @RequestBody IncomeInfo income) {
     	IncomeInfo existingIncome = incomeRepository.findFirstById(id);
     	if (existingIncome == null)
@@ -70,7 +70,7 @@ public class IncomeController {
         return ResponseEntity.ok(existingIncome);
     }
     
-    @DeleteMapping("/sbs/i_s/income/{s_id}")
+    @DeleteMapping("/sbs/i_s/income/{i_id}")
     public ResponseEntity<IncomeInfo> deleteSpending(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("i_id") Long id) {
     	IncomeInfo income = incomeRepository.findFirstById(id);
     	if (income == null)
