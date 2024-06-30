@@ -26,10 +26,12 @@ import com.example.springboot.dao.SpendingRepository;
 import com.example.springboot.dao.UserRepository;
 import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.ExpIncInfo;
+import com.example.springboot.model.IncomeInfo;
 import com.example.springboot.model.SpendingInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.dao.ExpIncRepository;
+import com.example.springboot.dao.IncomeRepository;
 import com.example.springboot.storage.StorageService;
 
 @EnableJpaRepositories(repositoryBaseClass = RefreshableCRUDRepositoryImpl.class)
@@ -54,7 +56,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo, IncomeRepository incomeRepo) {
         // if not in dev mode, do nothing
 		// to config dev mode, set SPRING_PROFILES_ACTIVE=dev in the environment variables
 		if (System.getenv("SPRING_PROFILES_ACTIVE") != null && !System.getenv("SPRING_PROFILES_ACTIVE").equals("dev")) {
@@ -145,6 +147,21 @@ public class Application {
 				spending6,
 				spending7,
 				spending8
+			));
+
+			IncomeInfo income1 = new IncomeInfo(1, "Bonds", 5000, now, "Bank", exp2, defaultUser);
+			IncomeInfo income2 = new IncomeInfo(2, "Website advertisement revenue", 10000, now, "Google", exp4, defaultUser2);
+			IncomeInfo income3 = new IncomeInfo(3, "Bonus", 15000, now, "Boss", exp1, defaultUser);
+			IncomeInfo income4 = new IncomeInfo(4, "Stock exchange", 20000, now, "Bank", exp2, defaultUser);
+			IncomeInfo income5 = new IncomeInfo(5, "Day job", 25000, now, "Boss", exp2, defaultUser);
+			IncomeInfo income6 = new IncomeInfo(6, "Property income", 30000, now, "Renter", exp2, defaultUser);
+			incomeRepo.saveAll(Arrays.asList(
+				income1,
+				income2,
+				income3,
+				income4,
+				income5,
+				income6
 			));
         };
     }
