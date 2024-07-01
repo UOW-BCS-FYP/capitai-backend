@@ -35,13 +35,9 @@ public class MessageController {
     public ResponseEntity<MessageInfo[]> getMessages(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("ai_type") String type) {
     	UserInfo userInfo = userRepository.findByUsername(user.getName());
         List<MessageInfo> msgs = new ArrayList<MessageInfo>();
-        for (MessageInfo msg : messageRepository.findAllByUserInfo(userInfo)) {
-            System.err.println(msg.getAIType() + " - " + type);
-            if (msg.getAIType().equals(type)) {
-                System.err.println("! " + msg.getAIType() + " = " + type);
+        for (MessageInfo msg : messageRepository.findAllByUserInfo(userInfo))
+            if (msg.getAIType().equals(type))
                 msgs.add(msg);
-            }
-        }
         return ResponseEntity.ok().body(msgs.toArray(new MessageInfo[msgs.size()]));
     }
 
