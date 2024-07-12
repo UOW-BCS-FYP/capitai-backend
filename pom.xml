@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.example.springboot</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>capit-ai</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	
-	<name>demo</name>
+	<name>capit-ai</name>
     <description>Spring Boot with Thymeleaf</description>
 	
 	<parent>

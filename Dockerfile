@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1.0-experimental 
 
 # Developement setup for springboot application
-FROM --platform=linux/amd64 ubuntu:20.04
+FROM --platform=linux/amd64 ubuntu:20.04 AS dev
 
 WORKDIR /app
 
@@ -37,6 +37,18 @@ EXPOSE 8080
 
 # build the application
 RUN mvn clean install -DskipTests
+RUN mvn clean package
 
 # CMD ["/bin/bash", "-c", "source /root/.sdkman/bin/sdkman-init.sh && mvn spring-boot:run"]
 CMD ["mvn", "clean", "spring-boot:run"]
+
+# Production setup for springboot application
+FROM --platform=linux/amd64 openjdk:18-jre-slim AS prod
+
+WORKDIR /app
+
+COPY --from=dev /app/target/*.jar /app/app.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]
