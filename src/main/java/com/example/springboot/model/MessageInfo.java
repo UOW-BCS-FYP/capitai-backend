@@ -15,32 +15,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 @Entity
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BUDGETCATEGORY")
-public class BudgetCtgyInfo {
-    
+@Table(name = "MESSAGE")
+public class MessageInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "ID")
     private long id;
 
-    private String title;
-
-    private double amount;
-    private boolean isBill;
-    private int intervalMonth;
-    private Date lastInterval;
-    private String status;
-
+    private String content;
+    private Date createdDate;
+    private String AIType; //carson or sunny
+    private String sentBy; //user or AI
+    
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserInfo userInfo;
-
-    //@OneToMany(mappedBy = "BudgetCtgyInfo", fetch = FetchType.LAZY)
-    //private Set<SpendingInfo> reviews = new HashSet<>();
 }

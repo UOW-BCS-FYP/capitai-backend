@@ -1,8 +1,6 @@
 package com.example.springboot;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,10 +24,16 @@ import com.example.springboot.dao.SpendingRepository;
 import com.example.springboot.dao.UserRepository;
 import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.ExpIncInfo;
+import com.example.springboot.model.GoalInfo;
+import com.example.springboot.model.IncomeInfo;
+import com.example.springboot.model.MessageInfo;
 import com.example.springboot.model.SpendingInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.dao.ExpIncRepository;
+import com.example.springboot.dao.GoalRepository;
+import com.example.springboot.dao.IncomeRepository;
+import com.example.springboot.dao.MessageRepository;
 import com.example.springboot.storage.StorageService;
 
 @EnableJpaRepositories(repositoryBaseClass = RefreshableCRUDRepositoryImpl.class)
@@ -54,7 +58,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo, IncomeRepository incomeRepo, MessageRepository msgRepo, GoalRepository goalRepo) {
         // if not in dev mode, do nothing
 		// to config dev mode, set SPRING_PROFILES_ACTIVE=dev in the environment variables
 		if (System.getenv("SPRING_PROFILES_ACTIVE") != null && !System.getenv("SPRING_PROFILES_ACTIVE").equals("dev")) {
@@ -145,6 +149,59 @@ public class Application {
 				spending6,
 				spending7,
 				spending8
+			));
+
+			IncomeInfo income1 = new IncomeInfo(1, "Bonds", 5000, now, "Bank", exp2, defaultUser);
+			IncomeInfo income2 = new IncomeInfo(2, "Website advertisement revenue", 10000, now, "Google", exp4, defaultUser2);
+			IncomeInfo income3 = new IncomeInfo(3, "Bonus", 15000, now, "Boss", exp1, defaultUser);
+			IncomeInfo income4 = new IncomeInfo(4, "Stock exchange", 20000, now, "Bank", exp2, defaultUser2);
+			IncomeInfo income5 = new IncomeInfo(5, "Day job", 25000, now, "Boss", exp2, defaultUser);
+			IncomeInfo income6 = new IncomeInfo(6, "Property income", 30000, now, "Renter", exp2, defaultUser2);
+			incomeRepo.saveAll(Arrays.asList(
+				income1,
+				income2,
+				income3,
+				income4,
+				income5,
+				income6
+			));
+
+			MessageInfo msg1 = new MessageInfo(1, "Hello carson", now, "carson", "user", defaultUser);
+			MessageInfo msg2 = new MessageInfo(2, "Hello user", now, "carson", "ai", defaultUser);
+			MessageInfo msg3 = new MessageInfo(3, "Hello sunny", now, "sunny", "user", defaultUser);
+			MessageInfo msg4 = new MessageInfo(4, "Hello user", now, "sunny", "ai", defaultUser);
+			msgRepo.saveAll(Arrays.asList(
+				msg1,
+				msg2,
+				msg3,
+				msg4
+			));
+
+			GoalInfo goal1 = new GoalInfo(1, "Capital Building", "Capital Building", 10000, 1, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal2 = new GoalInfo(2, "Debt Payment", "Debt Payment", 5000, 2, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal3 = new GoalInfo(3, "Long Term Expense", "Long Term Expense", 2000, 3, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal4 = new GoalInfo(4, "Capital Building", "Capital Building", 10000, 4, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal5 = new GoalInfo(5, "Debt Payment", "Debt Payment", 5000, 5, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal6 = new GoalInfo(6, "Long Term Expense", "Long Term Expense", 2000, 6, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal7 = new GoalInfo(7, "Capital Building", "Capital Building", 10000, 7, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal8 = new GoalInfo(8, "Debt Payment", "Debt Payment", 5000, 8, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal9 = new GoalInfo(9, "Long Term Expense", "Long Term Expense", 2000, 9, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal10 = new GoalInfo(10, "Capital Building", "Capital Building", 10000, 10, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal11 = new GoalInfo(11, "Debt Payment", "Debt Payment", 5000, 11, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal12 = new GoalInfo(12, "Long Term Expense", "Long Term Expense", 2000, 12, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			goalRepo.saveAll(Arrays.asList(
+				goal1, 
+				goal2, 
+				goal3, 
+				goal4, 
+				goal5, 
+				goal6, 
+				goal7, 
+				goal8, 
+				goal9,
+				goal10,
+				goal11,
+				goal12
 			));
         };
     }
