@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HelloController {
 	
-	@ResponseBody
-  @RequestMapping("/hello")
-  public String hello() {
-    return "this is in demo2 in tutorial";
-  }
+	// @ResponseBody
+  // @RequestMapping("/hello")
+  // public String hello() {
+  //   return "this is in demo2 in tutorial";
+  // }
 
   @GetMapping("/")
   public String index() {

@@ -68,7 +68,10 @@ public class Application {
 		return args -> {
 			// truncate all tables
 			spendingRepo.deleteAll();
+			goalRepo.deleteAll();
+			incomeRepo.deleteAll();
 			budgetRepo.deleteAll();
+			msgRepo.deleteAll();
 			expIncRepo.deleteAll();
 			userRepo.deleteAll();
 			roleRepo.deleteAll();
