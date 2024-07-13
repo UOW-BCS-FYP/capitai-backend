@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.springboot.dto.FirebaseUserDTO;
 import com.example.springboot.dto.UserRequestDTO;
 import com.example.springboot.dto.UserResponseDTO;
-import com.example.springboot.model.TourInfo;
 import com.example.springboot.service.AdminUserServiceImpl;
 import com.example.springboot.service.UserService;
 import com.example.springboot.service.UserServiceImpl;
