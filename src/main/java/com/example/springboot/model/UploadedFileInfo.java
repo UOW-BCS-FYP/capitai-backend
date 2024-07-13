@@ -45,4 +45,8 @@ public class UploadedFileInfo {
     @UpdateTimestamp
     private Date updatedDate;
 
+    @ManyToOne
+    @JoinColumn(name = "message_id", referencedColumnName = "id")
+    private FinancialConsultantMessageInfo financialConsultantMessageInfo;
+
 }

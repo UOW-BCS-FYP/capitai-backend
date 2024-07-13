@@ -1,5 +1,6 @@
 package com.example.springboot;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
@@ -90,9 +91,9 @@ public class Application {
 			String bio1 = "Hi there! I am Joanna Wellick. I am a travel enthusiast and I love to explore new places. I am a travel blogger and I love to share my travel experiences with the world. I am also a travel guide and I love to help people explore new places.";
 			String bio2 = "Hi there! I am Elliot Alderson. I am a travel enthusiast and I love to explore new places. I am a travel blogger and I love to share my travel experiences with the world. I am also a travel guide and I love to help people explore new places.";
 			// bio for user2
-			UserInfo adminUser = new UserInfo(1, "Admin", password, new HashSet<>(Arrays.asList(adminRole)), "admin@wanderwise.com", "I am Admin", "Administrator", "admin", "admin", null, null, null, null, null);
-			UserInfo defaultUser = new UserInfo(2, "Demo User1", password, new HashSet<>(Arrays.asList(userRole)), "Demo User1", bio1, "Joanna Wellick", "Wellick", "Joanna", "/src/assets/post-author-icon.png", null, null, null, null);
-			UserInfo defaultUser2 = new UserInfo( 3, "Demo User2", password, new HashSet<>(Arrays.asList(userRole)), "Demo User2", bio2, "Elliot Alderson", "Alderson", "Elliot", "/src/assets/post-author-icon.png", null, null, null, null);
+			UserInfo adminUser = new UserInfo(1, "Admin", password, new HashSet<>(Arrays.asList(adminRole)), "admin@capit-ai.com", "I am Admin", "Administrator", "admin", "admin", null, null, null, null, null);
+			UserInfo defaultUser = new UserInfo(2, "Demo User1", password, new HashSet<>(Arrays.asList(userRole)), "demo@capit-ai.com", bio1, "Joanna Wellick", "Wellick", "Joanna", "/assets/user-1-CznVQ9Sv.jpg", null, null, null, null);
+			UserInfo defaultUser2 = new UserInfo( 3, "Demo User2", password, new HashSet<>(Arrays.asList(userRole)), "demo2@capit-ai.com", bio2, "Elliot Alderson", "Alderson", "Elliot", "/assets/user-1-CznVQ9Sv.jpg", null, null, null, null);
 			userRepo.saveAll(Arrays.asList(
 				adminUser,
 				defaultUser,
@@ -180,27 +181,27 @@ public class Application {
 				msg4
 			));
 
-			GoalInfo goal1 = new GoalInfo(1, "Capital Building", "Capital Building", 10000, 1, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
-			GoalInfo goal2 = new GoalInfo(2, "Debt Payment", "Debt Payment", 5000, 2, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal3 = new GoalInfo(3, "Long Term Expense", "Long Term Expense", 2000, 3, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal4 = new GoalInfo(4, "Capital Building", "Capital Building", 10000, 4, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
-			GoalInfo goal5 = new GoalInfo(5, "Debt Payment", "Debt Payment", 5000, 5, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal6 = new GoalInfo(6, "Long Term Expense", "Long Term Expense", 2000, 6, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal7 = new GoalInfo(7, "Capital Building", "Capital Building", 10000, 7, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
-			GoalInfo goal8 = new GoalInfo(8, "Debt Payment", "Debt Payment", 5000, 8, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal9 = new GoalInfo(9, "Long Term Expense", "Long Term Expense", 2000, 9, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal10 = new GoalInfo(10, "Capital Building", "Capital Building", 10000, 10, false, now, 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
-			GoalInfo goal11 = new GoalInfo(11, "Debt Payment", "Debt Payment", 5000, 11, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
-			GoalInfo goal12 = new GoalInfo(12, "Long Term Expense", "Long Term Expense", 2000, 12, false, now, 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal1 = new GoalInfo(1, "Capital Building", "capital building", 10232, 1, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-12-12"), 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal2 = new GoalInfo(2, "Debt Payment", "debt payment", 5888, 2, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-11-1"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal3 = new GoalInfo(3, "Long Term Expense", "long term expense", 2322, 3, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-10-14"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal4 = new GoalInfo(4, "Capital Building", "capital building", 10930, 4, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-09-17"), 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal5 = new GoalInfo(5, "Debt Payment", "debt payment", 5050, 5, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-08-21"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal6 = new GoalInfo(6, "Long Term Expense", "long term expense", 2011, 6, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-07-16"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal7 = new GoalInfo(7, "Capital Building", "capital building", 10249, 7, false, new SimpleDateFormat("yyyy-MM-dd").parse("2024-06-11"), 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal8 = new GoalInfo(8, "Debt Payment", "debt payment", 4235, 8, false, new SimpleDateFormat("yyyy-MM-dd").parse("2024-05-09"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal9 = new GoalInfo(9, "Long Term Expense", "long term expense", 1899, 9, false, new SimpleDateFormat("yyyy-MM-dd").parse("2024-04-25"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal10 = new GoalInfo(10, "Capital Building", "capital building", 9988, 10, false, new SimpleDateFormat("yyyy-MM-dd").parse("2024-03-22"), 0, 0, 0, 0, null, 0, 0, 0, null, defaultUser);
+			GoalInfo goal11 = new GoalInfo(11, "Debt Payment", "debt payment", 4679, 11, false, new SimpleDateFormat("yyyy-MM-dd").parse("2023-02-18"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
+			GoalInfo goal12 = new GoalInfo(12, "Long Term Expense", "long term expense", 1689, 12, false, new SimpleDateFormat("yyyy-MM-dd").parse("2024-01-19"), 0, 0, 0, 0, now, 0, 0, 0, null, defaultUser);
 			goalRepo.saveAll(Arrays.asList(
-				goal1, 
-				goal2, 
-				goal3, 
-				goal4, 
-				goal5, 
-				goal6, 
-				goal7, 
-				goal8, 
+				goal1,
+				goal2,
+				goal3,
+				goal4,
+				goal5,
+				goal6,
+				goal7,
+				goal8,
 				goal9,
 				goal10,
 				goal11,

@@ -1,7 +1,13 @@
 package com.example.springboot.web;
 
+import java.util.List;
+import java.util.Map;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,23 +15,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.springboot.dao.BudgetCtgyRepository;
 import com.example.springboot.dao.GoalRepository;
 import com.example.springboot.dao.UserRepository;
+import com.example.springboot.dto.FinancialGoalCreateDTO;
 import com.example.springboot.dto.FirebaseUserDTO;
-import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.GoalInfo;
 import com.example.springboot.model.UserInfo;
+import com.example.springboot.service.FinancialGoalService;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/goal-tracker")
 public class GoalController {
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
+    @Autowired
+    private FinancialGoalService goalService;
 
     @Autowired
     public GoalController(
@@ -36,65 +46,95 @@ public class GoalController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/goal")
-    public ResponseEntity<GoalInfo[]> getGoal(@AuthenticationPrincipal FirebaseUserDTO user) {
-        // get current user
-        UserInfo userInfo = userRepository.findByUsername(user.getName());
-        return ResponseEntity.ok().body(goalRepository.findAllByUserInfo(userInfo));
+    @GetMapping
+    public Page<GoalInfo> getGoals(
+        @AuthenticationPrincipal FirebaseUserDTO user,
+        @RequestParam(required = false, defaultValue = "") String query,
+        @RequestParam(required = false, defaultValue = "id") String sortBy,
+        @RequestParam(required = false, defaultValue = "asc") String sortOrder,
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "10") int rowsPerPage
+    ) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        return goalService.getGoals(userInfo, query, sortBy, sortOrder, page, rowsPerPage);
     }
 
-    @GetMapping("/goal/{g_id}")
-    public ResponseEntity<GoalInfo> getGoalByID(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("g_id") Long id) {
-    	GoalInfo goal = goalRepository.findFirstById(id);
-    	if (goal == null)
-    		throw new RuntimeException("Goal not found");
-    	
-    	UserInfo userInfo = userRepository.findByUsername(user.getName());
-    	if (userInfo != goal.getUserInfo())
-    		throw new RuntimeException("user does not own this goal");
-    	
+    @PostMapping
+    public ResponseEntity<GoalInfo> addGoal(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody FinancialGoalCreateDTO newGoalDTO) {
+        UserInfo userInfo = userRepository.findByUsername(user.getName());
+        GoalInfo newGoal = new GoalInfo();
+        newGoal.setTitle(newGoalDTO.getTitle());
+        newGoal.setType(newGoalDTO.getType());
+        newGoal.setAmount(newGoalDTO.getAmount());
+        newGoal.setDeadline(newGoalDTO.getDeadline());
+        newGoal.setPriority(newGoalDTO.getPriority());
+        newGoal.setUserInfo(userInfo);
+        newGoal.setCompleted(false);
+        GoalInfo savedGoal = goalService.save(newGoal);
+        return ResponseEntity.ok(savedGoal);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GoalInfo> getGoal(@PathVariable Long id) {
+        GoalInfo goal = goalService.findById(id);
+        if (goal == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         return ResponseEntity.ok(goal);
     }
-    
-    @PostMapping("/goal")
-    public ResponseEntity<GoalInfo> createBudgetCtgy(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody GoalInfo goal) {
-    	UserInfo userInfo = userRepository.findByUsername(user.getName());
-        goal.setUserInfo(userInfo);
-        return ResponseEntity.ok(goalRepository.save(goal));
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GoalInfo> updateGoal(@PathVariable Long id, @RequestBody GoalInfo updatedGoal) {
+        GoalInfo existingGoal = goalService.findById(id);
+        if (existingGoal == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        BeanUtils.copyProperties(updatedGoal, existingGoal, "id");
+        GoalInfo savedGoal = goalService.save(existingGoal);
+        return ResponseEntity.ok(savedGoal);
     }
 
-    @PatchMapping("/goal/{g_id}")
-    public ResponseEntity<GoalInfo> updateBudgetCtgy(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("g_id") Long id, @RequestBody GoalInfo goal) {
-    	GoalInfo existingGoal = goalRepository.findFirstById(id);
-    	if (existingGoal == null)
-    		throw new RuntimeException("Goal not found");
-    	
-    	UserInfo userInfo = userRepository.findByUsername(user.getName());
-    	if (userInfo != existingGoal.getUserInfo())
-    		throw new RuntimeException("user does not own this goal");
-
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-        modelMapper.map(goal, existingGoal);
-
-        existingGoal.setId(id);
-
-        goalRepository.save(existingGoal);
-        goalRepository.refresh(existingGoal);
-        return ResponseEntity.ok(existingGoal);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> deleteGoal(@PathVariable Long id) {
+        GoalInfo existingGoal = goalService.findById(id);
+        if (existingGoal == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        goalService.delete(id);
+        return ResponseEntity.ok(id);
     }
-    
-    @DeleteMapping("/goal/{g_id}")
-    public ResponseEntity<GoalInfo> updateBudgetCtgy(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable("g_id") Long id) {
-    	GoalInfo goal = goalRepository.findFirstById(id);
-    	if (goal == null)
-    		throw new RuntimeException("Goal not found");
-    	
-    	UserInfo userInfo = userRepository.findByUsername(user.getName());
-    	if (userInfo != goal.getUserInfo())
-    		throw new RuntimeException("user does not own this goal");
-    	
-        goalRepository.delete(goal);
-    	return ResponseEntity.ok(goal);
+
+    @PutMapping("/rearrange")
+    public ResponseEntity<List<GoalInfo>> rearrangeGoals(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody GoalInfo updatedGoal) {
+        UserInfo userInfo = userRepository.findByUsername(user.getName());
+        List<GoalInfo> goals = goalService.findAllByUserInfo(userInfo);
+        GoalInfo goalToRearrange = goals.stream().filter(goal -> goal.getId() == updatedGoal.getId()).findFirst().orElse(null);
+        if (goalToRearrange == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        int oldPriority = goalToRearrange.getPriority();
+        int newPriority = updatedGoal.getPriority();
+        if (oldPriority == newPriority) {
+            return ResponseEntity.ok(goals);
+        }
+        int direction = oldPriority < newPriority ? 1 : -1;
+        goals.forEach(goal -> {
+            if (goal.getId() == updatedGoal.getId()) return;
+            if (direction == 1 && goal.getPriority() > oldPriority && goal.getPriority() <= newPriority) {
+                goal.setPriority(goal.getPriority() - 1);
+            }
+            if (direction == -1 && goal.getPriority() < oldPriority && goal.getPriority() >= newPriority) {
+                goal.setPriority(goal.getPriority() + 1);
+            }
+        });
+        goalToRearrange.setPriority(newPriority);
+        List<GoalInfo> savedGoals = goalService.saveAll(goals);
+        return ResponseEntity.ok(savedGoals);
     }
+
+    @GetMapping("/stat-chart")
+    public ResponseEntity<Map<String, Object>> getStatChart() {
+        return ResponseEntity.ok(goalService.getStatChart());
+    }
+
 }

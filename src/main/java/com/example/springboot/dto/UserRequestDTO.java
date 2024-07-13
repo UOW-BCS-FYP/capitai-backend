@@ -1,9 +1,5 @@
 package com.example.springboot.dto;
 
-import java.util.Set;
-
-import com.example.springboot.model.UserRole;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

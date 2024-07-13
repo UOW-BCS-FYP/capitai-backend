@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Tables;
-import org.springframework.context.annotation.Role;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
