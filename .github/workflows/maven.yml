@@ -76,7 +76,7 @@ jobs:
       - name: Build and Push Container
         run: |-
           echo "${{ secrets.MYSQL_CA }}" > ./mysql-ca-certificate.crt
-          docker build --secret id=mysql_ca_cert,src=./mysql-ca-certificate.crt -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" ./
+          docker build --secret id=mysql_ca_cert,src=./mysql-ca-certificate.crt --target prod -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}"
 
       - name: Deploy to Cloud Run
