@@ -28,5 +28,6 @@ public interface ExpIncRepository extends RefreshableCRUDRepository<ExpIncInfo, 
         @Param("max") Double max,
         Pageable pageable);
     void deleteById(Long id);
+    void deleteAllByUserInfo(UserInfo userInfo);
     void deleteByIdAndUserInfo(Long id, UserInfo userInfo);
 }

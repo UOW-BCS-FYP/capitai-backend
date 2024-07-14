@@ -9,10 +9,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.springboot.dao.UserRepository;
 import com.example.springboot.dto.FirebaseCredentialsDTO;
 import com.example.springboot.dto.FirebaseUserDTO;
+import com.example.springboot.model.UserInfo;
 import com.example.springboot.properties.SecurityProperties;
 import com.example.springboot.service.SecurityService;
+import com.example.springboot.service.UserService;
 import com.example.springboot.util.CookieUtils;
 import com.google.auth.Credentials;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,12 +37,14 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final SecurityProperties securityProperties;
     private final SecurityService securityService;
     private final CookieUtils cookieUtils;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SecurityFilter(SecurityProperties securityProperties, SecurityService securityService, CookieUtils cookieUtils) {
+    public SecurityFilter(SecurityProperties securityProperties, SecurityService securityService, CookieUtils cookieUtils, UserRepository userRepository) {
         this.securityProperties = securityProperties;
         this.securityService = securityService;
         this.cookieUtils = cookieUtils;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -81,6 +86,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         FirebaseUserDTO user = firebaseTokenToUserDto(decodedToken);
         logger.info("User: " + user);
         if (user != null) {
+            createUserInfoIfNotExists(user);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,
                     new FirebaseCredentialsDTO(type, decodedToken, token, session), null);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -100,6 +106,18 @@ public class SecurityFilter extends OncePerRequestFilter {
             user.setEmailVerified(decodedToken.isEmailVerified());
         }
         return user;
+    }
+
+    private void createUserInfoIfNotExists(FirebaseUserDTO user) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        if (userInfo == null) {
+            UserInfo newUser = new UserInfo();
+            newUser.setEmail(user.getEmail());
+            newUser.setName(user.getName());
+            newUser.setPicture(user.getPicture());
+            newUser.setUsername(user.getName());
+            userRepository.save(newUser);
+        }
     }
 
 }

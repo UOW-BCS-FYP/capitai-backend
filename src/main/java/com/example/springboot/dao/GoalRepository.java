@@ -15,6 +15,7 @@ public interface GoalRepository extends RefreshableCRUDRepository<GoalInfo, Long
 	GoalInfo findFirstByIdAndUserInfo(Long id, UserInfo userInfo);
 	GoalInfo[] findAllByUserInfo(UserInfo userInfo);
 	void deleteByIdAndUserInfo(Long id, UserInfo userInfo);
+	void deleteAllByUserInfo(UserInfo userInfo);
 	Page<GoalInfo> findAllByUserInfoAndTitleContainingIgnoreCase(UserInfo userInfo, String title, Pageable pageable);
 
 	@Query("SELECT SUM(g.amount) FROM GoalInfo g WHERE g.type = :type AND EXTRACT(YEAR FROM g.deadline) = :year AND g.userInfo = :userInfo")

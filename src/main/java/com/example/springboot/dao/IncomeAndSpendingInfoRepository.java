@@ -2,6 +2,7 @@ package com.example.springboot.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +33,10 @@ public interface IncomeAndSpendingInfoRepository extends RefreshableCRUDReposito
 
     void deleteByIdAndUserInfo(Long id, UserInfo userInfo);
     IncomeAndSpendingInfo findFirstByIdAndUserInfo(Long id, UserInfo userInfo);
+    @Query("SELECT YEAR(date) as year, MONTH(date) as month, SUM(amount) as amount " +
+            "FROM IncomeAndSpendingInfo " +
+            "WHERE isIncome = :isIncome AND userInfo = :userInfo " +
+            "GROUP BY YEAR(date), MONTH(date)")
+    List<Map<String, Object>> monthlyAmountByTypeAndUserInfo(@Param("isIncome") boolean isIncome, @Param("userInfo") UserInfo userInfo);
+    void deleteAllByUserInfo(UserInfo userInfo);
 }

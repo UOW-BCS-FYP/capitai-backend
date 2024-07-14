@@ -11,7 +11,9 @@ import com.example.springboot.model.IncomeAndSpendingInfo;
 import com.example.springboot.model.UserInfo;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -45,5 +47,17 @@ public class IncomeAndSpendingServiceImp implements IncomeAndSpendingService {
         inSInfo.setId(id);
         inSInfo.setUserInfo(userInfo);
         return inSInfoRepository.save(inSInfo);
+    }
+
+    public Map<String, Object> getStatChart(UserInfo userInfo) {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Map<String, Object>> incomes = inSInfoRepository.monthlyAmountByTypeAndUserInfo(true, userInfo);
+        List<Map<String, Object>> expenses = inSInfoRepository.monthlyAmountByTypeAndUserInfo(false, userInfo);
+
+        response.put("incomes", incomes);
+        response.put("expenses", expenses);
+
+        return response;
     }
 }

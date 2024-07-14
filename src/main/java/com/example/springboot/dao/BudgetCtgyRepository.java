@@ -31,5 +31,6 @@ public interface BudgetCtgyRepository extends RefreshableCRUDRepository<BudgetCt
                                             Pageable pageable);
 
 	void deleteById(Long id);
+    void deleteAllByUserInfo(UserInfo userInfo);
     void deleteByIdAndUserInfo(Long id, UserInfo userInfo);
 }

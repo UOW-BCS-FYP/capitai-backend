@@ -2,6 +2,7 @@ package com.example.springboot.web;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,10 @@ import com.example.springboot.dto.IncomeAndSpendingCreateDTO;
 import com.example.springboot.dto.IncomeAndSpendingListResponseDTO;
 import com.example.springboot.dto.IncomeAndSpendingResponseDTO;
 import com.example.springboot.model.BudgetCtgyInfo;
-import com.example.springboot.model.ExpIncInfo;
 import com.example.springboot.model.IncomeAndSpendingInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.service.BudgetCategoryService;
 import com.example.springboot.service.IncomeAndSpendingService;
-import com.google.cloud.storage.Acl.User;
-import com.google.rpc.context.AttributeContext.Response;
 
 @RestController
 @RequestMapping("/api/v1/smart-budgeting/income-spending-record")
@@ -111,5 +109,11 @@ public class IncomeAndSpendingController {
         updatedInSInfo.setCategory(category);
         updatedInSInfo = incomeAndSpendingService.updateInSInfo(userInfo, id, updatedInSInfo);
         return ResponseEntity.ok().body(new IncomeAndSpendingResponseDTO(updatedInSInfo.getId(), updatedInSInfo.getTitle(), updatedInSInfo.getAmount(), updatedInSInfo.getDate(), updatedInSInfo.getSubject(), updatedInSInfo.isIncome(), updatedInSInfo.getCategory().getTitle()));
+    }
+
+    @GetMapping("/stat-chart")
+    public ResponseEntity<Map<String, Object>> getStatChart(@AuthenticationPrincipal FirebaseUserDTO user) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        return ResponseEntity.ok(incomeAndSpendingService.getStatChart(userInfo));
     }
 }
