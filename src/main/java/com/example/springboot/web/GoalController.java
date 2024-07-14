@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springboot.dao.GoalRepository;
 import com.example.springboot.dao.UserRepository;
 import com.example.springboot.dto.FinancialGoalCreateDTO;
+import com.example.springboot.dto.FinancialGoalListResponseDTO;
 import com.example.springboot.dto.FirebaseUserDTO;
 import com.example.springboot.model.GoalInfo;
 import com.example.springboot.model.UserInfo;
@@ -47,7 +48,7 @@ public class GoalController {
     }
 
     @GetMapping
-    public Page<GoalInfo> getGoals(
+    public ResponseEntity<FinancialGoalListResponseDTO> getGoals(
         @AuthenticationPrincipal FirebaseUserDTO user,
         @RequestParam(required = false, defaultValue = "") String query,
         @RequestParam(required = false, defaultValue = "id") String sortBy,
@@ -56,12 +57,14 @@ public class GoalController {
         @RequestParam(required = false, defaultValue = "10") int rowsPerPage
     ) {
         UserInfo userInfo = userRepository.findByEmail(user.getEmail());
-        return goalService.getGoals(userInfo, query, sortBy, sortOrder, page, rowsPerPage);
+        // return goalService.getGoals(userInfo, query, sortBy, sortOrder, page, rowsPerPage);
+        Page<GoalInfo> goals = goalService.getGoals(userInfo, query, sortBy, sortOrder, page, rowsPerPage);
+        return ResponseEntity.ok(new FinancialGoalListResponseDTO(goals.getContent(), (int) goals.getTotalElements()));
     }
 
     @PostMapping
     public ResponseEntity<GoalInfo> addGoal(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody FinancialGoalCreateDTO newGoalDTO) {
-        UserInfo userInfo = userRepository.findByUsername(user.getName());
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
         GoalInfo newGoal = new GoalInfo();
         newGoal.setTitle(newGoalDTO.getTitle());
         newGoal.setType(newGoalDTO.getType());
@@ -70,42 +73,31 @@ public class GoalController {
         newGoal.setPriority(newGoalDTO.getPriority());
         newGoal.setUserInfo(userInfo);
         newGoal.setCompleted(false);
-        GoalInfo savedGoal = goalService.save(newGoal);
+        GoalInfo savedGoal = goalService.save(userInfo, newGoal);
         return ResponseEntity.ok(savedGoal);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GoalInfo> getGoal(@PathVariable Long id) {
-        GoalInfo goal = goalService.findById(id);
-        if (goal == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        return ResponseEntity.ok(goal);
+    public ResponseEntity<GoalInfo> getGoal(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable Long id) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        return ResponseEntity.ok(goalService.findById(userInfo, id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GoalInfo> updateGoal(@PathVariable Long id, @RequestBody GoalInfo updatedGoal) {
-        GoalInfo existingGoal = goalService.findById(id);
-        if (existingGoal == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        BeanUtils.copyProperties(updatedGoal, existingGoal, "id");
-        GoalInfo savedGoal = goalService.save(existingGoal);
-        return ResponseEntity.ok(savedGoal);
+    public ResponseEntity<GoalInfo> updateGoal(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable Long id, @RequestBody GoalInfo updatedGoal) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        return ResponseEntity.ok(goalService.update(userInfo, updatedGoal, id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteGoal(@PathVariable Long id) {
-        GoalInfo existingGoal = goalService.findById(id);
-        if (existingGoal == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        goalService.delete(id);
+    public ResponseEntity<Long> deleteGoal(@AuthenticationPrincipal FirebaseUserDTO user, @PathVariable Long id) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        goalService.delete(userInfo, id);
         return ResponseEntity.ok(id);
     }
 
     @PutMapping("/rearrange")
-    public ResponseEntity<List<GoalInfo>> rearrangeGoals(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody GoalInfo updatedGoal) {
+    public ResponseEntity<FinancialGoalListResponseDTO> rearrangeGoals(@AuthenticationPrincipal FirebaseUserDTO user, @RequestBody GoalInfo updatedGoal) {
         UserInfo userInfo = userRepository.findByUsername(user.getName());
         List<GoalInfo> goals = goalService.findAllByUserInfo(userInfo);
         GoalInfo goalToRearrange = goals.stream().filter(goal -> goal.getId() == updatedGoal.getId()).findFirst().orElse(null);
@@ -115,7 +107,7 @@ public class GoalController {
         int oldPriority = goalToRearrange.getPriority();
         int newPriority = updatedGoal.getPriority();
         if (oldPriority == newPriority) {
-            return ResponseEntity.ok(goals);
+            return ResponseEntity.ok(new FinancialGoalListResponseDTO(goals, goals.size()));
         }
         int direction = oldPriority < newPriority ? 1 : -1;
         goals.forEach(goal -> {
@@ -128,13 +120,14 @@ public class GoalController {
             }
         });
         goalToRearrange.setPriority(newPriority);
-        List<GoalInfo> savedGoals = goalService.saveAll(goals);
-        return ResponseEntity.ok(savedGoals);
+        List<GoalInfo> savedGoals = goalService.updateAll(userInfo, goals);
+        return ResponseEntity.ok(new FinancialGoalListResponseDTO(savedGoals, savedGoals.size()));
     }
 
     @GetMapping("/stat-chart")
-    public ResponseEntity<Map<String, Object>> getStatChart() {
-        return ResponseEntity.ok(goalService.getStatChart());
+    public ResponseEntity<Map<String, Object>> getStatChart(@AuthenticationPrincipal FirebaseUserDTO user) {
+        UserInfo userInfo = userRepository.findByEmail(user.getEmail());
+        return ResponseEntity.ok(goalService.getStatChart(userInfo));
     }
 
 }

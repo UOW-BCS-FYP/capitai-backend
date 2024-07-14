@@ -16,6 +16,8 @@ import com.example.springboot.dao.GoalRepository;
 import com.example.springboot.model.GoalInfo;
 import com.example.springboot.model.UserInfo;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class FinancialGoalServiceImpl implements FinancialGoalService{
     
@@ -27,71 +29,55 @@ public class FinancialGoalServiceImpl implements FinancialGoalService{
         return goalRepository.findAllByUserInfoAndTitleContainingIgnoreCase(userInfo, query, pageable);
     }
 
-    public GoalInfo save(GoalInfo goal) {
+    public GoalInfo save(UserInfo userInfo, GoalInfo goal) {
+        goal.setUserInfo(userInfo);
         return goalRepository.save(goal);
     }
 
-    public List<GoalInfo> saveAll(List<GoalInfo> goals) {
+    public GoalInfo update(UserInfo userInfo, GoalInfo goal, Long id) {
+        GoalInfo existingGoal = goalRepository.findFirstByIdAndUserInfo(id, userInfo);
+        if (existingGoal == null) {
+            return null;
+        }
+        goal.setId(id);
+        goal.setUserInfo(userInfo);
+        return goalRepository.save(goal);
+    }
+
+    public List<GoalInfo> updateAll(UserInfo userInfo, List<GoalInfo> goals) {
+        for (GoalInfo goal : goals) {
+            GoalInfo existingGoal = goalRepository.findFirstByIdAndUserInfo(goal.getId(), userInfo);
+            if (existingGoal == null) {
+                return null;
+            }
+        }
         return StreamSupport.stream(goalRepository.saveAll(goals).spliterator(), false)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
-    public GoalInfo findById(Long id) {
-        return goalRepository.findFirstById(id);
+    @Transactional
+    public void delete(UserInfo userInfo, Long id) {
+        goalRepository.deleteByIdAndUserInfo(id, userInfo);
     }
 
-    public void delete(Long id) {
-        goalRepository.deleteById(id);
+    public GoalInfo findById(UserInfo userInfo, Long id) {
+        return goalRepository.findFirstByIdAndUserInfo(id, userInfo);
     }
 
     public List<GoalInfo> findAllByUserInfo(UserInfo userInfo) {
         return List.of(goalRepository.findAllByUserInfo(userInfo));
     }
 
-    public Map<String, Object> getStatChart() {
-        // Map<String, Object> response = new HashMap<>();
-
-        // Map<String, Integer> capitalBuilding = new HashMap<>();
-        // capitalBuilding.put("thisYear", 5000);
-        // capitalBuilding.put("lastYear", 3000);
-
-        // Map<String, Object> debtPayment = new HashMap<>();
-        // debtPayment.put("thisYear", 3000);
-        // debtPayment.put("lastYear", 2000);
-        // List<Map<String, Object>> repayment = new ArrayList<>();
-        // for (int i = 1; i <= 12; i++) {
-        //     Map<String, Object> month = new HashMap<>();
-        //     month.put("month", new DateFormatSymbols().getMonths()[i-1]);
-        //     month.put("amount", i * 100);
-        //     repayment.add(month);
-        // }
-        // debtPayment.put("repayment", repayment);
-
-        // Map<String, Object> longTermExpense = new HashMap<>();
-        // List<Map<String, Object>> expenses = new ArrayList<>();
-        // for (int i = 1; i <= 12; i++) {
-        //     Map<String, Object> month = new HashMap<>();
-        //     month.put("month", new DateFormatSymbols().getMonths()[i-1]);
-        //     month.put("amount", i * 100);
-        //     expenses.add(month);
-        // }
-        // longTermExpense.put("expenses", expenses);
-
-        // response.put("capitalBuilding", capitalBuilding);
-        // response.put("debtPayment", debtPayment);
-        // response.put("longTermExpense", longTermExpense);
-
-        // return response;
-
+    public Map<String, Object> getStatChart(UserInfo userInfo) {
         Map<String, Object> response = new HashMap<>();
 
         // Fetch data from the repository
-        Double capitalBuildingThisYear = goalRepository.sumAmountByTypeAndYear("capital building", LocalDate.now().getYear());
-        Double capitalBuildingLastYear = goalRepository.sumAmountByTypeAndYear("capital building", LocalDate.now().getYear() - 1);
-        Double debtPaymentThisYear = goalRepository.sumAmountByTypeAndYear("debt payment", LocalDate.now().getYear());
-        Double debtPaymentLastYear = goalRepository.sumAmountByTypeAndYear("debt payment", LocalDate.now().getYear() - 1);
-        List<Map<String, Object>> debtPaymentRepayment = goalRepository.monthlyAmountByType("debt payment");
-        List<Map<String, Object>> longTermExpenseExpenses = goalRepository.monthlyAmountByType("long term expense");
+        Double capitalBuildingThisYear = goalRepository.sumAmountByTypeAndYearAndUserInfo("capital building", LocalDate.now().getYear(), userInfo);
+        Double capitalBuildingLastYear = goalRepository.sumAmountByTypeAndYearAndUserInfo("capital building", LocalDate.now().getYear() - 1, userInfo);
+        Double debtPaymentThisYear = goalRepository.sumAmountByTypeAndYearAndUserInfo("debt payment", LocalDate.now().getYear(), userInfo);
+        Double debtPaymentLastYear = goalRepository.sumAmountByTypeAndYearAndUserInfo("debt payment", LocalDate.now().getYear() - 1, userInfo);
+        List<Map<String, Object>> debtPaymentRepayment = goalRepository.monthlyAmountByTypeAndUserInfo("debt payment", userInfo);
+        List<Map<String, Object>> longTermExpenseExpenses = goalRepository.monthlyAmountByTypeAndUserInfo("long term expense", userInfo);
 
         // Check if the values are null and replace with default values
         capitalBuildingThisYear = capitalBuildingThisYear != null ? capitalBuildingThisYear : 0;

@@ -35,7 +35,7 @@ public class ExpIncInfo {
     private boolean isRegular;
     private int intervalMonth;
     private Date lastInterval;
-    private String status;
+    private boolean isActivated;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

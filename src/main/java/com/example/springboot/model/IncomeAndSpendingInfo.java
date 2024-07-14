@@ -1,5 +1,7 @@
 package com.example.springboot.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,19 +20,28 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "NOTIFICATION")
-public class NotificationInfo {
-
+@Table(name = "INS")
+public class IncomeAndSpendingInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "ID")
     private long id;
     private String title;
-    private String subtitle;
-    private String type;
-    private String url;
+    private double amount;
+    private Date date;
+    private String subject;
+    private boolean isIncome;
+    // private String category;
+    
+    @ManyToOne
+    @JoinColumn(name = "expInc_id", referencedColumnName = "id")
+    private ExpIncInfo expIncInfo;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "budgetCategory_id", referencedColumnName = "id")
+    private BudgetCtgyInfo category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id") //budget category already has user as foreign key, this column might be redundant
     private UserInfo userInfo;
 }

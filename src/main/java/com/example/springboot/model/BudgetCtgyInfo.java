@@ -35,7 +35,8 @@ public class BudgetCtgyInfo {
     private boolean isBill;
     private int intervalMonth;
     private Date lastInterval;
-    private String status;
+    private boolean isActivated;
+    // private String status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

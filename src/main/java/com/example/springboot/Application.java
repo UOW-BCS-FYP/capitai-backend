@@ -26,15 +26,19 @@ import com.example.springboot.dao.UserRepository;
 import com.example.springboot.model.BudgetCtgyInfo;
 import com.example.springboot.model.ExpIncInfo;
 import com.example.springboot.model.GoalInfo;
+import com.example.springboot.model.IncomeAndSpendingInfo;
 import com.example.springboot.model.IncomeInfo;
 import com.example.springboot.model.MessageInfo;
+import com.example.springboot.model.NotificationInfo;
 import com.example.springboot.model.SpendingInfo;
 import com.example.springboot.model.UserInfo;
 import com.example.springboot.model.UserRole;
 import com.example.springboot.dao.ExpIncRepository;
 import com.example.springboot.dao.GoalRepository;
+import com.example.springboot.dao.IncomeAndSpendingInfoRepository;
 import com.example.springboot.dao.IncomeRepository;
 import com.example.springboot.dao.MessageRepository;
+import com.example.springboot.dao.NotificationRepository;
 import com.example.springboot.storage.StorageService;
 
 @EnableJpaRepositories(repositoryBaseClass = RefreshableCRUDRepositoryImpl.class)
@@ -59,7 +63,7 @@ public class Application {
 	// }
 
 	@Bean
-    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo, IncomeRepository incomeRepo, MessageRepository msgRepo, GoalRepository goalRepo) {
+    public CommandLineRunner demoData(RoleRepository roleRepo, UserRepository userRepo, BudgetCtgyRepository budgetRepo, ExpIncRepository expIncRepo, SpendingRepository spendingRepo, IncomeRepository incomeRepo, MessageRepository msgRepo, GoalRepository goalRepo, NotificationRepository notificationRepository, IncomeAndSpendingInfoRepository incomeAndSpendingInfoRepository) {
         // if not in dev mode, do nothing
 		// to config dev mode, set SPRING_PROFILES_ACTIVE=dev in the environment variables
 		if (System.getenv("SPRING_PROFILES_ACTIVE") != null && !System.getenv("SPRING_PROFILES_ACTIVE").equals("dev")) {
@@ -68,6 +72,8 @@ public class Application {
 		
 		return args -> {
 			// truncate all tables
+			incomeAndSpendingInfoRepository.deleteAll();
+			notificationRepository.deleteAll();
 			spendingRepo.deleteAll();
 			goalRepo.deleteAll();
 			incomeRepo.deleteAll();
@@ -102,14 +108,14 @@ public class Application {
 
 			Date now = Date.from(Instant.now());
 			
-			BudgetCtgyInfo cat1 = new BudgetCtgyInfo(1, "Furniture repairment", 350, false, 0, now, "active", defaultUser);
-			BudgetCtgyInfo cat2 = new BudgetCtgyInfo(2, "Rent", 10000, true, 1, now, "active", defaultUser2);
-			BudgetCtgyInfo cat3 = new BudgetCtgyInfo(3, "Transportation", 200, true, 1, now, "active", defaultUser);
-			BudgetCtgyInfo cat4 = new BudgetCtgyInfo(4, "Tuition fee", 10000, false, 0, now, "active", defaultUser2);
-			BudgetCtgyInfo cat5 = new BudgetCtgyInfo(5, "Food", 3000, true, 1, now, "active", defaultUser);
-			BudgetCtgyInfo cat6 = new BudgetCtgyInfo(6, "Water bill", 300, true, 3, now, "inactive", defaultUser2);
-			BudgetCtgyInfo cat7 = new BudgetCtgyInfo(7, "Other", 500, false, 0, now, "active", defaultUser);
-			BudgetCtgyInfo cat8 = new BudgetCtgyInfo(8, "Other", 600, false, 0, now, "active", defaultUser2);
+			BudgetCtgyInfo cat1 = new BudgetCtgyInfo(1, "Furniture repairment", 350, false, 0, now, true, defaultUser);
+			BudgetCtgyInfo cat2 = new BudgetCtgyInfo(2, "Rent", 10000, true, 1, now, true, defaultUser2);
+			BudgetCtgyInfo cat3 = new BudgetCtgyInfo(3, "Transportation", 200, true, 1, now, true, defaultUser);
+			BudgetCtgyInfo cat4 = new BudgetCtgyInfo(4, "Tuition fee", 10000, false, 0, now, true, defaultUser2);
+			BudgetCtgyInfo cat5 = new BudgetCtgyInfo(5, "Food", 3000, true, 1, now, true, defaultUser);
+			BudgetCtgyInfo cat6 = new BudgetCtgyInfo(6, "Water bill", 300, true, 3, now, false, defaultUser2);
+			BudgetCtgyInfo cat7 = new BudgetCtgyInfo(7, "Other", 500, false, 0, now, true, defaultUser);
+			BudgetCtgyInfo cat8 = new BudgetCtgyInfo(8, "Other", 600, false, 0, now, true, defaultUser2);
 			budgetRepo.saveAll(Arrays.asList(
 				cat1,
 				cat2,
@@ -121,12 +127,12 @@ public class Application {
 				cat8
 			));
 			
-			ExpIncInfo exp1 = new ExpIncInfo(1, "Wage", 10000, true, 1, now, "active", defaultUser);
-			ExpIncInfo exp2 = new ExpIncInfo(2, "Stocks", 1000, true, 1, now, "active", defaultUser);
-			ExpIncInfo exp3 = new ExpIncInfo(3, "Red envelop money", 2500, false, 0, now, "active", defaultUser);
-			ExpIncInfo exp4 = new ExpIncInfo(4, "Business", 25000, true, 3, now, "inactive", defaultUser2);
-			ExpIncInfo exp5 = new ExpIncInfo(5, "Property leasing", 15000, true, 1, now, "active", defaultUser2);
-			ExpIncInfo exp6 = new ExpIncInfo(6, "Bitcoin cash out", 5500, false, 0, now, "active", defaultUser2);
+			ExpIncInfo exp1 = new ExpIncInfo(1, "Wage", 10000, true, 1, now, true, defaultUser);
+			ExpIncInfo exp2 = new ExpIncInfo(2, "Stocks", 1000, true, 1, now, true, defaultUser);
+			ExpIncInfo exp3 = new ExpIncInfo(3, "Red envelop money", 2500, false, 0, now, true, defaultUser);
+			ExpIncInfo exp4 = new ExpIncInfo(4, "Business", 25000, true, 3, now, false, defaultUser2);
+			ExpIncInfo exp5 = new ExpIncInfo(5, "Property leasing", 15000, true, 1, now, true, defaultUser2);
+			ExpIncInfo exp6 = new ExpIncInfo(6, "Bitcoin cash out", 5500, false, 0, now, true, defaultUser2);
 			expIncRepo.saveAll(Arrays.asList(
 				exp1,
 				exp2,
@@ -207,6 +213,41 @@ public class Application {
 				goal11,
 				goal12
 			));
+
+			NotificationInfo notif1 = new NotificationInfo(1, "Lunch time is now, warm reminder to record food spending today.", "Click to open I&S page", "spending", "/smart-budgeting/income-n-spending", defaultUser);
+			NotificationInfo notif2 = new NotificationInfo(2, "A month has passed, warm reminder to review your budget plan.", "Click to open Budget Plan page", "endOfMonth", "/smart-budgeting", defaultUser);
+			NotificationInfo notif3 = new NotificationInfo(3, "You have enough money for goal Tuition Fee, Congratutations!", "Click to open Goal Tracker page", "goalReached", "/goal-tracker/stat", defaultUser);
+			NotificationInfo notif4 = new NotificationInfo(4, "Good morning, warm reminder to record your commute spending.", "Click to open I&S page", "commute", "/smart-budgeting/income-n-spending", defaultUser);
+			NotificationInfo notif5 = new NotificationInfo(5, "Dinner time is now, warm reminder to record food spending today.", "Click to open I&S page", "spending", "/smart-budgeting/income-n-spending", defaultUser);
+			NotificationInfo notif6 = new NotificationInfo(6, "You have enough money for goal Capital Building, Congratutations!", "Click to open Goal Tracker page", "goalReached", "/goal-tracker/stat", defaultUser);
+			NotificationInfo notif7 = new NotificationInfo(7, "Good evening, warm reminder to record your commute spending.", "Click to open I&S page", "commute", "/smart-budgeting/income-n-spending", defaultUser);
+			notificationRepository.saveAll(Arrays.asList(
+				notif1,
+				notif2,
+				notif3,
+				notif4,
+				notif5,
+				notif6,
+				notif7
+			));
+
+			IncomeAndSpendingInfo ins1 = new IncomeAndSpendingInfo(1, "Rent Payment", 10000, now, "landlord", false, exp4, cat2, defaultUser2);
+			IncomeAndSpendingInfo ins2 = new IncomeAndSpendingInfo(2, "MTR", 10, now, "MTR", false, exp3, cat3, defaultUser);
+			IncomeAndSpendingInfo ins3 = new IncomeAndSpendingInfo(3, "lunch", 50, now, "ABC restaurant", false, exp3, cat5, defaultUser);
+			IncomeAndSpendingInfo ins4 = new IncomeAndSpendingInfo(4, "water bill payment", 300, now, "Water Supplies Department", false, exp3, cat6, defaultUser2);
+			IncomeAndSpendingInfo ins5 = new IncomeAndSpendingInfo(5, "wage", 10000, now, "manager", true, exp1, cat1, defaultUser);
+			IncomeAndSpendingInfo ins6 = new IncomeAndSpendingInfo(6, "stock exchange", 10000, now, "bank", true, exp2, cat2, defaultUser);
+			IncomeAndSpendingInfo ins7 = new IncomeAndSpendingInfo(7, "website advertisement revenue", 10000, now, "google", true, exp4, cat7, defaultUser);
+			incomeAndSpendingInfoRepository.saveAll(Arrays.asList(
+				ins1,
+				ins2,
+				ins3,
+				ins4,
+				ins5,
+				ins6,
+				ins7
+			));
+
         };
     }
 

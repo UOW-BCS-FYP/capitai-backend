@@ -11,10 +11,13 @@ import com.example.springboot.model.UserInfo;
 public interface FinancialGoalService {
 
     public Page<GoalInfo> getGoals(UserInfo userInfo, String query, String sortBy, String sortOrder, int page, int rowsPerPage);
-    public GoalInfo save(GoalInfo goal);
-    public List<GoalInfo> saveAll(List<GoalInfo> goals);
-    public GoalInfo findById(Long id);
-    public void delete(Long id);
+    public GoalInfo save(UserInfo userInfo, GoalInfo goal);
+    // public List<GoalInfo> saveAll(UserInfo userInfo, List<GoalInfo> goals);
+    public GoalInfo update(UserInfo userInfo, GoalInfo goal, Long id);
+    public List<GoalInfo> updateAll(UserInfo userInfo, List<GoalInfo> goals);
+    public GoalInfo findById(UserInfo userInfo, Long id);
+    // public void delete(Long id);
+    public void delete(UserInfo userInfo, Long id);
     public List<GoalInfo> findAllByUserInfo(UserInfo userInfo);
-    public Map<String, Object> getStatChart();
+    public Map<String, Object> getStatChart(UserInfo userInfo);
 }
